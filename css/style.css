@@ -212,23 +212,41 @@ em { font-style: italic; }
     inset 0 0 0 13px var(--filet);
 }
 
-/* Ligne de menu : nom ……… prix */
+/* Ligne de menu : nom ……… prix
+   Les pointillés courent sous toute la largeur du nom, au niveau de sa
+   dernière ligne ; le texte porte un fond de la couleur de la carte qui
+   les masque. Quand le nom passe à la ligne, les pointillés repartent
+   donc juste après le dernier mot au lieu d'être écrasés. */
 .menu-line {
+  --menu-fond: var(--creme);
+  --pointilles-y: 12px;   /* hauteur des pointillés depuis le bas du nom */
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
+  align-items: last baseline;
   gap: 10px;
   margin: 0;
 }
 .menu-line__name {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-right: 22px;   /* garantit toujours un bout de pointillés */
   font-size: 16px;
   font-weight: 600;
 }
-.menu-line__dots {
-  flex: 1 1 auto;
-  min-width: 16px;
-  position: relative;
-  top: -5px;
+.menu-line__name::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--pointilles-y);
   border-bottom: 2px dotted var(--pointilles);
+}
+.menu-line__label {
+  position: relative;
+  z-index: 1;
+  padding-right: 8px;
+  background: var(--menu-fond);
 }
 .menu-line__price {
   font-family: var(--font-titre);
@@ -534,10 +552,7 @@ em { font-style: italic; }
   font-size: 15px;
   color: var(--sauge);
 }
-.menu-line--choice .menu-line__dots {
-  min-width: 12px;
-  border-bottom-color: rgba(107, 101, 96, 0.4);
-}
+.menu-line--choice .menu-line__name::after { border-bottom-color: rgba(107, 101, 96, 0.4); }
 .menu-line--choice .menu-line__price { font-size: 26px; }
 .choice__btn {
   align-self: flex-start;
@@ -590,6 +605,7 @@ em { font-style: italic; }
     inset 0 0 0 19px var(--blanc),
     inset 0 0 0 20px rgba(107, 101, 96, 0.18);
 }
+.soins__card .menu-line { --menu-fond: var(--blanc); }
 .soins__head {
   display: flex;
   flex-direction: column;
@@ -615,16 +631,12 @@ em { font-style: italic; }
   flex-direction: column;
   gap: 12px;
 }
-.menu-line--lg { gap: 14px; }
+.menu-line--lg { gap: 14px; --pointilles-y: 14px; }
 .menu-line--lg .menu-line__name {
   font-family: var(--font-titre);
   font-weight: 400;
   font-size: 32px;
   line-height: 1.15;
-}
-.menu-line--lg .menu-line__dots {
-  top: -8px;
-  min-width: 24px;
 }
 .menu-line--lg .menu-line__price {
   font-size: 36px;
@@ -1277,9 +1289,8 @@ em { font-style: italic; }
       inset 0 0 0 13px rgba(107, 101, 96, 0.18);
   }
   .soins__title { font-size: 34px; }
-  .menu-line--lg { gap: 10px; }
-  .menu-line--lg .menu-line__name { font-size: 24px; }
-  .menu-line--lg .menu-line__dots { top: -6px; min-width: 16px; }
+  .menu-line--lg { gap: 10px; --pointilles-y: 10px; }
+  .menu-line--lg .menu-line__name { font-size: 24px; padding-right: 16px; }
   .menu-line--lg .menu-line__price { font-size: 28px; }
   .soin__action .btn { width: 100%; }
 
