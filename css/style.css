@@ -1,0 +1,1383 @@
+/* ==========================================================================
+   Violette Holistic Massage — feuille de style
+   Référence visuelle : maquette-reference.html (1440 px)
+   ========================================================================== */
+
+/* ---------- 1. Variables (charte graphique) ---------- */
+:root {
+  /* Couleurs */
+  --creme: #F7F4EF;
+  --lin: #EBE2DC;
+  --sauge: #4A6B4F;
+  --sauge-hover: #3C5A41;
+  --foret: #2E3A30;
+  --taupe: #6B6560;
+  --prune: #7A5270;
+  --blanc: #FFFFFF;
+
+  /* Filets et pointillés (Taupe transparent) */
+  --filet-fin: rgba(107, 101, 96, 0.2);
+  --filet: rgba(107, 101, 96, 0.3);
+  --pointilles: rgba(107, 101, 96, 0.45);
+
+  /* Polices */
+  --font-titre: 'Fraunces', Georgia, serif;
+  --font-texte: 'Nunito Sans', system-ui, sans-serif;
+
+  /* Mise en page */
+  --contenu-max: 1280px;
+  --marge: 40px;
+  --section-y: 120px;
+
+  /* Formes */
+  --rayon-pilule: 40px;
+  --rayon-papier: 4px;
+  --ombre-flottante: 0 24px 60px rgba(46, 58, 48, 0.16);
+
+  /* Hauteur de l'en-tête (pour les ancres) */
+  --header-h: 89px;
+
+  /* Photo du hero : 580 px comme la maquette, réduite sur les écrans peu hauts
+     pour que le titre reste visible en entier à l'arrivée sur la page. */
+  --hero-photo-h: clamp(300px, calc(100vh - 250px), 580px);
+}
+
+/* ---------- 2. Base ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  scroll-padding-top: var(--header-h);
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: clip;
+  background: var(--creme);
+  color: var(--foret);
+  font-family: var(--font-texte);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+img { max-width: 100%; display: block; }
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-variation-settings: 'SOFT' 100;
+}
+
+p, ul, ol, figure, blockquote { margin: 0; }
+
+a { color: var(--sauge); }
+
+/* Effets de survol uniquement avec une souris : sur écran tactile,
+   ils resteraient « collés » après le toucher. */
+@media (hover: hover) {
+  a:hover { color: var(--foret); }
+  .btn:hover { background: var(--sauge-hover); color: var(--blanc); }
+  .btn--light:hover { background: var(--blanc); color: var(--foret); }
+  .logo:hover { color: var(--foret); }
+  .site-footer a:hover { color: var(--blanc); }
+}
+
+em { font-style: italic; }
+
+/* Contour visible au clavier */
+:focus-visible {
+  outline: 2px solid var(--sauge);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  max-width: var(--contenu-max);
+  margin-inline: auto;
+  padding-inline: var(--marge);
+}
+
+.center { display: flex; justify-content: center; }
+
+/* ---------- 3. Composants ---------- */
+
+/* Boutons pilule Sauge */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 28px;
+  border: 0;
+  border-radius: var(--rayon-pilule);
+  background: var(--sauge);
+  color: var(--blanc);
+  font-family: var(--font-texte);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.6;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.btn:focus-visible { border-radius: var(--rayon-pilule); }
+
+.btn--md { min-height: 48px; padding: 13px 28px; }
+.btn--lg { min-height: 52px; padding: 15px 34px; font-size: 17px; }
+.btn--block { display: flex; width: 100%; }
+
+.btn--light { background: var(--creme); color: var(--foret); }
+.btn--light:focus-visible { outline-color: var(--creme); }
+
+/* Liens texte soulignés */
+.text-link {
+  color: var(--sauge);
+  font-weight: 600;
+  font-size: 16px;
+  text-underline-offset: 5px;
+  align-self: flex-start;
+}
+.text-link--prune { color: var(--prune); }
+
+/* Sur-titres de section */
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-texte);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--taupe);
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  margin: 0;
+  color: var(--foret);
+  text-decoration: none;
+}
+.logo__name {
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.logo__sub {
+  padding-left: 2px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--taupe);
+}
+
+/* Carte « papier » : coins presque droits, double filet, ombre douce */
+.paper {
+  background: var(--creme);
+  border-radius: var(--rayon-papier);
+  box-shadow:
+    var(--ombre-flottante),
+    inset 0 0 0 10px var(--creme),
+    inset 0 0 0 11px var(--filet);
+}
+.paper--wide {
+  box-shadow:
+    var(--ombre-flottante),
+    inset 0 0 0 12px var(--creme),
+    inset 0 0 0 13px var(--filet);
+}
+
+/* Ligne de menu : nom ……… prix */
+.menu-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+.menu-line__name {
+  font-size: 16px;
+  font-weight: 600;
+}
+.menu-line__dots {
+  flex: 1 1 auto;
+  min-width: 16px;
+  position: relative;
+  top: -5px;
+  border-bottom: 2px dotted var(--pointilles);
+}
+.menu-line__price {
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 22px;
+  color: var(--prune);
+  white-space: nowrap;
+}
+
+/* Coches */
+.check-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.check {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--sauge);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Emplacements signalés */
+.placeholder {
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1.5px dashed var(--taupe);
+  border-radius: 12px;
+  background: var(--lin);
+}
+.placeholder__tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--taupe);
+}
+.placeholder__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--foret);
+}
+.placeholder__text {
+  font-size: 14px;
+  color: var(--taupe);
+}
+
+/* Titres de section partagés */
+.section-title {
+  font-size: 52px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+.section-title em,
+.booking__title em { color: var(--sauge); }
+
+/* ---------- 4. En-tête collant ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(247, 244, 239, 0.94);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--lin);
+}
+.site-header__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding-block: 18px;
+}
+
+/* ---------- 5. Hero ---------- */
+.hero {
+  background: var(--creme);
+  padding-bottom: var(--section-y);
+}
+.hero__media {
+  height: var(--hero-photo-h);
+  overflow: hidden;
+}
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+}
+
+/* Bande Crème qui remonte de 168 px sur la photo */
+.hero__band {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(var(--marge), 1fr) minmax(0, 760px) minmax(0, 440px) minmax(var(--marge), 1fr);
+  align-items: start;
+  margin-top: -168px;
+  padding-top: 56px;
+  background: var(--creme);
+}
+.hero__text {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-right: 64px;
+}
+.hero__kicker {
+  font-size: 16px;
+  color: var(--taupe);
+}
+.hero__title {
+  font-weight: 300;
+  font-size: 92px;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: var(--foret);
+}
+/* Sous 1280 px, le titre suit la largeur de sa colonne pour rester sur 2 lignes */
+@media (max-width: 1279px) {
+  .hero__text { container-type: inline-size; }
+  .hero__title { font-size: clamp(44px, calc(17.2cqi - 30px), 92px); }
+}
+.hero__title em {
+  font-weight: 300;
+  color: var(--sauge);
+}
+.hero__lead {
+  max-width: 28em;
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--taupe);
+}
+
+/* Carte « Ta prochaine séance » : dépasse de la bande de 120 px */
+.hero__card {
+  grid-column: 3;
+  position: relative;
+  margin-top: -120px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px 40px 36px;
+}
+.hero__card-title {
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-style: italic;
+  font-size: 22px;
+  text-align: center;
+}
+.hero__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.btn--block.btn--lg {
+  min-height: 54px;
+  padding: 16px 28px;
+}
+.check-list--small {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--taupe);
+}
+.check-list--small li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.check-list--small .check { stroke-width: 1.8; }
+
+/* ---------- 6. Pause « Respire » ---------- */
+.respire {
+  background: var(--lin);
+  padding-bottom: var(--section-y);
+}
+.respire__band {
+  position: relative;
+  height: 720px;
+  overflow: hidden;
+}
+.respire__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+}
+.respire__veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(46, 58, 48, 0.58);
+}
+.respire__content {
+  position: relative;
+  height: 100%;
+  max-width: 820px;
+  margin-inline: auto;
+  padding: 0 var(--marge) 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  text-align: center;
+  color: var(--creme);
+}
+.respire__kicker {
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 26px;
+  color: rgba(247, 244, 239, 0.85);
+}
+.respire__title {
+  font-weight: 300;
+  font-size: 68px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.respire__text {
+  max-width: 34em;
+  font-size: 19px;
+  line-height: 1.7;
+  color: rgba(247, 244, 239, 0.88);
+}
+
+/* Carte « Par où commencer ? » : remonte de 150 px sur la photo */
+.start {
+  position: relative;
+  max-width: 1080px;
+  margin: -150px auto 0;
+  padding-inline: var(--marge);
+}
+.start__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  padding: 64px 72px 52px;
+}
+.leaf {
+  position: absolute;
+  fill: none;
+  stroke: var(--sauge);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.leaf--top {
+  left: -44px;
+  top: -64px;
+  width: 110px;
+  height: 150px;
+  stroke-width: 1.3;
+  opacity: 0.8;
+  transform: rotate(-18deg);
+}
+.leaf--bottom {
+  right: -30px;
+  bottom: -40px;
+  width: 90px;
+  height: 122px;
+  stroke-width: 1.4;
+  opacity: 0.7;
+  transform: rotate(160deg);
+}
+.start__title {
+  font-style: italic;
+  font-size: 30px;
+  line-height: 1.6;
+  text-align: center;
+}
+.start__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 72px;
+  row-gap: 44px;
+}
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.choice__title {
+  font-size: 28px;
+  line-height: 1.25;
+}
+.choice__text { color: var(--taupe); }
+.menu-line--choice { padding-top: 4px; }
+.menu-line--choice .menu-line__name {
+  font-size: 15px;
+  color: var(--sauge);
+}
+.menu-line--choice .menu-line__dots {
+  min-width: 12px;
+  border-bottom-color: rgba(107, 101, 96, 0.4);
+}
+.menu-line--choice .menu-line__price { font-size: 26px; }
+.choice__btn {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+.start__foot {
+  padding-top: 28px;
+  border-top: 1px solid var(--filet-fin);
+  text-align: center;
+  font-size: 16px;
+  color: var(--taupe);
+}
+.start__foot .text-link { white-space: nowrap; }
+
+/* ---------- 7. Carte des soins ---------- */
+.soins { background: var(--creme); }
+.soins__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 56px;
+  padding-top: 130px;
+  padding-bottom: var(--section-y);
+}
+.soins__photo {
+  position: relative;
+  flex: 1 1 380px;
+  min-width: 0;
+  min-height: 560px;
+}
+.soins__photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.soins__card {
+  flex: 1.35 1 560px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 72px 76px 64px;
+  background: var(--blanc);
+  border-radius: var(--rayon-papier);
+  box-shadow:
+    inset 0 0 0 14px var(--blanc),
+    inset 0 0 0 15px rgba(107, 101, 96, 0.35),
+    inset 0 0 0 19px var(--blanc),
+    inset 0 0 0 20px rgba(107, 101, 96, 0.18);
+}
+.soins__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+.ornament {
+  width: 40px;
+  height: 14px;
+  fill: none;
+  stroke: var(--prune);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+.soins__title {
+  font-size: 48px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+.soin {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.menu-line--lg { gap: 14px; }
+.menu-line--lg .menu-line__name {
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.15;
+}
+.menu-line--lg .menu-line__dots {
+  top: -8px;
+  min-width: 24px;
+}
+.menu-line--lg .menu-line__price {
+  font-size: 36px;
+  line-height: 1;
+}
+.soin__meta {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sauge);
+}
+.soin__desc {
+  max-width: 34em;
+  color: var(--taupe);
+}
+.soin__action { padding-top: 10px; }
+.soin__action .btn { padding-block: 12px; }
+.soins__rule {
+  width: 100%;
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background: var(--filet-fin);
+}
+.soins__note {
+  padding-top: 8px;
+  font-size: 14px;
+  color: var(--taupe);
+  text-align: center;
+}
+
+/* ---------- 8. Ta séance ---------- */
+.seance { background: var(--lin); }
+.seance__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding-block: var(--section-y);
+}
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 680px;
+}
+.section-intro {
+  font-size: 19px;
+  color: var(--taupe);
+}
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.step__img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+.step__num {
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--prune);
+}
+.step__title {
+  font-size: 23px;
+  line-height: 1.25;
+}
+.step__text {
+  font-size: 16px;
+  color: var(--taupe);
+}
+.step__details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(107, 101, 96, 0.25);
+  font-size: 15px;
+  color: var(--foret);
+}
+.step__details li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.step__details .check { margin-top: 4px; }
+
+/* ---------- 9. Je suis Violette ---------- */
+.about { background: var(--creme); }
+.about__inner {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 88px;
+  padding-block: var(--section-y);
+}
+.about__photos {
+  position: relative;
+  padding: 0 64px 64px 0;
+}
+.about__portrait {
+  width: 100%;
+  height: 620px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+.about__inset {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 8px solid var(--creme);
+}
+.about__text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.about__title {
+  font-size: 56px;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+.about__p { font-size: 18px; }
+.about__p--soft { color: var(--taupe); }
+.about__facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 20px;
+  padding-top: 8px;
+}
+.fact {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding-right: 24px;
+  border-right: 1px solid var(--filet);
+}
+.fact__value {
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--prune);
+}
+.fact__label {
+  font-size: 14px;
+  color: var(--taupe);
+}
+
+/* ---------- 10. Avis ---------- */
+.reviews { background: var(--lin); }
+.reviews__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 52px;
+  padding-block: var(--section-y);
+}
+.reviews__eyebrow { text-align: center; }
+.reviews__slides {
+  width: 100%;
+  max-width: 900px;
+}
+.review {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 64px 72px 52px;
+  border: 1.5px dashed rgba(107, 101, 96, 0.6);
+  border-radius: 16px;
+  text-align: center;
+}
+.review[hidden] { display: none; }
+.review__mark {
+  height: 48px;
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 120px;
+  line-height: 0.5;
+  color: var(--prune);
+}
+.review__quote {
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--foret);
+}
+.review__caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.review__name {
+  font-size: 17px;
+  font-weight: 600;
+}
+.review__meta {
+  font-size: 15px;
+  color: var(--taupe);
+}
+.reviews__dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: -24px;
+}
+.dot {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.dot::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--taupe);
+}
+.dot[aria-current="true"]::before {
+  border-color: var(--prune);
+  background: var(--prune);
+}
+.dot:focus-visible { border-radius: 50%; }
+.reviews__source {
+  margin-top: -28px;
+  font-size: 14px;
+  color: var(--taupe);
+}
+
+/* ---------- 11. FAQ ---------- */
+.faq { background: var(--creme); }
+.faq__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 64px;
+  padding-block: var(--section-y);
+}
+.faq__intro {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.faq__lead {
+  max-width: 22em;
+  color: var(--taupe);
+}
+.faq__list {
+  flex: 2 1 520px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--filet);
+}
+/* Le padding est réparti entre la question et la ligne pour garder
+   le rendu de la maquette avec une zone cliquable de 44 px minimum. */
+.faq__item {
+  padding: 19px 0;
+  border-bottom: 1px solid var(--filet);
+}
+.faq__item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  min-height: 44px;
+  padding: 7px 0;
+  list-style: none;
+  cursor: pointer;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__q {
+  font-family: var(--font-titre);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 23px;
+  line-height: 1.3;
+}
+.faq__icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--sauge);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transition: transform 0.2s ease;
+}
+.faq__item[open] .faq__icon { transform: rotate(45deg); }
+.faq__a {
+  max-width: 40em;
+  margin: 7px 0;
+  color: var(--taupe);
+}
+
+/* ---------- 12. Réservation finale ---------- */
+.booking { background: var(--lin); }
+.booking__inner {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 72px;
+  padding-block: var(--section-y);
+}
+.booking__text {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+.booking__title {
+  font-size: 64px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.booking__lead {
+  font-size: 19px;
+  color: var(--taupe);
+}
+.booking__list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 8px;
+  padding: 0;
+  list-style: none;
+  font-weight: 600;
+}
+.booking__list li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pill-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--creme);
+}
+.pill-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--sauge);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Emplacement Calendly (temporaire) */
+.placeholder-box {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-height: 640px;
+  padding: 40px;
+  border: 1.5px dashed var(--taupe);
+  border-radius: 16px;
+  background: var(--creme);
+}
+.placeholder-box__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.placeholder-box__title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.fake-calendar {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-content: start;
+  gap: 10px;
+  opacity: 0.55;
+}
+.fake-calendar span {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(107, 101, 96, 0.35);
+}
+.fake-calendar .is-free {
+  border: 0;
+  background: rgba(74, 107, 79, 0.25);
+}
+.fake-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0.55;
+}
+.fake-slots span {
+  height: 44px;
+  border-radius: var(--rayon-pilule);
+  border: 1px solid rgba(74, 107, 79, 0.5);
+}
+
+/* ---------- 13. Pied de page ---------- */
+.site-footer {
+  background: var(--foret);
+  color: var(--creme);
+}
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  padding-top: 88px;
+  padding-bottom: 40px;
+}
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 48px;
+}
+.site-footer__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+.logo--light { color: var(--creme); }
+.logo--light .logo__name { font-size: 40px; }
+.logo--light .logo__sub { color: rgba(247, 244, 239, 0.72); }
+.site-footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 15.5px;
+}
+.site-footer__heading {
+  font-family: var(--font-texte);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(247, 244, 239, 0.72);
+}
+.site-footer__soft { color: rgba(247, 244, 239, 0.8); }
+.site-footer a { color: var(--creme); text-underline-offset: 4px; }
+.site-footer a:focus-visible { outline-color: var(--creme); }
+.site-footer__link { align-self: flex-start; }
+.site-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 32px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(247, 244, 239, 0.18);
+  font-size: 13.5px;
+  color: rgba(247, 244, 239, 0.72);
+}
+.site-footer__legal { display: flex; gap: 24px; }
+.site-footer__bottom a { color: rgba(247, 244, 239, 0.72); }
+.site-footer .btn--light { color: var(--foret); }
+
+/* ---------- 14. Barre « Réserver » fixe (téléphone uniquement) ---------- */
+.mobile-cta { display: none; }
+
+/* ==========================================================================
+   15. Adaptation tablette et téléphone
+   Points de rupture : 1080 px (petit ordinateur / tablette paysage),
+   960 px (tablette portrait), 760 px (téléphone).
+   Repères : WCAG 2.2 (aucun défilement horizontal jusqu'à 320 px,
+   cibles tactiles de 44 px), marges latérales de 20 px (brief, section 7).
+   ========================================================================== */
+
+/* ---------- ≤ 1160 px : les brins de feuillage restent dans l'écran ---------- */
+@media (max-width: 1160px) {
+  .leaf--top { left: -12px; }
+  .leaf--bottom { right: -8px; }
+}
+
+/* ---------- ≤ 1080 px ---------- */
+@media (max-width: 1080px) {
+  :root { --section-y: 96px; }
+
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 48px; }
+  .about__inner { gap: 56px; }
+  .about__portrait { height: 540px; }
+  .booking__inner { gap: 48px; }
+}
+
+/* ---------- ≤ 960 px ---------- */
+@media (max-width: 960px) {
+  /* Hero : texte puis carte, l'un sous l'autre */
+  .hero__band {
+    grid-template-columns: var(--marge) minmax(0, 1fr) var(--marge);
+    margin-top: -120px;
+    padding-top: 48px;
+  }
+  .hero__text { grid-column: 2; padding-right: 0; }
+  .hero__card {
+    grid-column: 2;
+    justify-self: start;
+    width: min(100%, 480px);
+    margin-top: 48px;
+  }
+
+  .start__card { padding: 56px 48px 44px; }
+  .start__grid { column-gap: 40px; }
+
+  .soins__card { padding: 64px 52px 56px; }
+
+  .section-title { font-size: 44px; }
+
+  .about__inner { grid-template-columns: minmax(0, 1fr); }
+  .about__photos { max-width: 560px; }
+
+  .booking__inner { grid-template-columns: minmax(0, 1fr); }
+  .booking__title { font-size: 52px; }
+
+  .site-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------- ≤ 760 px : téléphone ---------- */
+@media (max-width: 760px) {
+  :root {
+    --marge: 20px;
+    --section-y: 72px;
+    --header-h: 0px;
+    --hero-photo-h: clamp(260px, 52svh, 440px);
+  }
+
+  body { font-size: 16px; }
+
+  /* En-tête : le bouton est remplacé par la barre fixe en bas d'écran,
+     l'en-tête n'a donc plus besoin de rester collé en haut. */
+  .site-header { position: relative; }
+  .site-header__inner { padding-block: 14px; }
+  .site-header .btn { display: none; }
+  .logo__name { font-size: 30px; }
+  .logo__sub { font-size: 10px; }
+
+  .section-title { font-size: 34px; line-height: 1.15; }
+
+  /* Liens seuls sur leur ligne : zone tactile agrandie à 44 px */
+  .hero__text > .text-link,
+  .about__text > .text-link,
+  .site-footer__link,
+  .site-footer__legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .eyebrow { font-size: 12px; letter-spacing: 0.18em; }
+
+  /* Hero */
+  .hero__media img { object-position: center 30%; }
+  .hero__band {
+    margin-top: -28px;
+    padding-top: 32px;
+    border-radius: 20px 20px 0 0;
+  }
+  .hero__text { gap: 20px; }
+  .hero__kicker { font-size: 14px; }
+  .hero__title {
+    font-size: clamp(36px, 10.6vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+  }
+  .hero__lead { font-size: 17px; }
+  .hero__card {
+    width: 100%;
+    margin-top: 36px;
+    padding: 32px 24px 28px;
+  }
+
+  /* Pause « Respire » */
+  .respire__band { height: auto; min-height: 560px; display: flex; }
+  .respire__content {
+    height: auto;
+    padding: 72px var(--marge) 132px;
+    gap: 18px;
+  }
+  .respire__kicker { font-size: 22px; }
+  .respire__title { font-size: 34px; line-height: 1.15; }
+  .respire__text { font-size: 17px; }
+
+  /* « Par où commencer ? » */
+  .start { margin-top: -96px; }
+  .start__card {
+    gap: 32px;
+    padding: 48px 26px 36px;
+  }
+  .paper--wide {
+    box-shadow:
+      var(--ombre-flottante),
+      inset 0 0 0 8px var(--creme),
+      inset 0 0 0 9px var(--filet);
+  }
+  .leaf--top { left: 0; top: -46px; width: 72px; height: 98px; }
+  .leaf--bottom { right: 2px; bottom: -50px; width: 52px; height: 72px; }
+  .start__title { font-size: 26px; line-height: 1.3; }
+  .start__grid { grid-template-columns: minmax(0, 1fr); row-gap: 36px; }
+  .choice + .choice { padding-top: 36px; border-top: 1px solid var(--filet-fin); }
+  .choice__title { font-size: 24px; }
+  .menu-line--choice .menu-line__price { font-size: 24px; }
+  .choice__btn { align-self: stretch; }
+  .start__foot { padding-top: 24px; font-size: 15px; }
+  .start__foot .text-link { white-space: normal; }
+
+  /* Carte des soins */
+  .soins__inner { gap: 32px; padding-top: 88px; }
+  .soins__photo { flex-basis: 100%; min-height: 0; aspect-ratio: 4 / 3; }
+  .soins__photo img { border-radius: 4px; }
+  .soins__card {
+    flex-basis: 100%;
+    gap: 36px;
+    padding: 44px 26px 40px;
+    box-shadow:
+      inset 0 0 0 8px var(--blanc),
+      inset 0 0 0 9px rgba(107, 101, 96, 0.35),
+      inset 0 0 0 12px var(--blanc),
+      inset 0 0 0 13px rgba(107, 101, 96, 0.18);
+  }
+  .soins__title { font-size: 34px; }
+  .menu-line--lg { gap: 10px; }
+  .menu-line--lg .menu-line__name { font-size: 24px; }
+  .menu-line--lg .menu-line__dots { top: -6px; min-width: 16px; }
+  .menu-line--lg .menu-line__price { font-size: 28px; }
+  .soin__action .btn { width: 100%; }
+
+  /* Ta séance : étapes en défilement horizontal, la suivante dépasse
+     légèrement pour inviter à faire glisser. */
+  .seance__inner { gap: 40px; }
+  .section-intro { font-size: 17px; }
+  .steps {
+    display: flex;
+    gap: 16px;
+    margin-inline: calc(-1 * var(--marge));
+    padding: 0 var(--marge) 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--marge);
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .steps::-webkit-scrollbar { display: none; }
+  .step { flex: 0 0 80%; scroll-snap-align: start; }
+  .step__img { height: 220px; }
+  .step__num { font-size: 30px; }
+  .step__title { font-size: 21px; }
+  .seance .center .btn { width: 100%; }
+
+  /* Je suis Violette */
+  .about__inner { gap: 40px; }
+  .about__photos { padding: 0 36px 36px 0; }
+  .about__portrait { height: auto; aspect-ratio: 4 / 5; }
+  .about__inset { height: auto; aspect-ratio: 4 / 5; width: 42%; border-width: 6px; }
+  .about__text { gap: 18px; }
+  .about__title { font-size: 40px; }
+  .about__p { font-size: 17px; }
+  .about__facts { flex-direction: column; gap: 16px; }
+  .fact { padding: 0 0 16px; border-right: 0; border-bottom: 1px solid var(--filet); }
+  .fact__value { font-size: 38px; }
+  .placeholder { flex-basis: auto; }
+
+  /* Avis */
+  .reviews__inner { gap: 40px; }
+  .review { gap: 20px; padding: 44px 22px 36px; }
+  .review__mark { height: 36px; font-size: 92px; }
+  .review__quote { font-size: 26px; }
+  .reviews__dots { margin-top: -16px; }
+  .reviews__source { margin-top: -20px; text-align: center; }
+  .reviews__inner > .btn { width: 100%; }
+
+  /* FAQ */
+  .faq__inner { gap: 32px; }
+  .faq__intro, .faq__list { flex-basis: 100%; }
+  .faq__item { padding: 12px 0; }
+  .faq__item summary { gap: 16px; }
+  .faq__q { font-size: 19px; }
+  .faq__a { font-size: 16px; }
+
+  /* Réservation */
+  .booking__text { gap: 20px; }
+  .booking__title { font-size: 42px; }
+  .booking__lead { font-size: 17px; }
+  .booking__list { gap: 14px; }
+  .placeholder-box { min-height: 0; padding: 24px 20px; }
+
+  /* Pied de page */
+  .site-footer__inner { gap: 44px; padding-top: 64px; padding-bottom: 32px; }
+  .site-footer__grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .site-footer__bottom { flex-direction: column; }
+  .site-footer__legal { flex-wrap: wrap; gap: 8px 24px; }
+
+  /* Barre « Réserver » fixe en bas d'écran */
+  .mobile-cta {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    padding: 12px var(--marge) calc(12px + env(safe-area-inset-bottom));
+    background: rgba(247, 244, 239, 0.94);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--lin);
+    box-shadow: 0 -8px 24px rgba(46, 58, 48, 0.08);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.3s;
+  }
+  .mobile-cta.is-hidden {
+    transform: translateY(100%);
+    visibility: hidden;
+  }
+}
+
+/* ---------- ≤ 360 px : petits téléphones ---------- */
+@media (max-width: 360px) {
+  :root { --marge: 16px; }
+  .start__card, .soins__card { padding-inline: 20px; }
+  .menu-line--lg .menu-line__name { font-size: 22px; }
+  .step { flex-basis: 86%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-cta { transition: none; }
+}
