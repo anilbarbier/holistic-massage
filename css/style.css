@@ -3,6 +3,31 @@
    Référence visuelle : maquette-reference.html (1440 px)
    ========================================================================== */
 
+/* ---------- 0. Polices (hébergées sur le site, licence SIL OFL) ----------
+   Fichiers variables, sous-ensemble « latin » de Google Fonts : il couvre
+   tout le français (accents, œ, €, guillemets, espaces fines). */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../fonts/fraunces-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../fonts/fraunces-italic-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../fonts/nunito-sans-latin.woff2') format('woff2');
+}
+
 /* ---------- 1. Variables (charte graphique) ---------- */
 :root {
   /* Couleurs */
@@ -87,6 +112,7 @@ a { color: var(--sauge); }
   a:hover { color: var(--foret); }
   .btn:hover { background: var(--sauge-hover); color: var(--blanc); }
   .btn--light:hover { background: var(--blanc); color: var(--foret); }
+  .btn--outline:hover { background: rgba(74, 107, 79, 0.1); color: var(--sauge-hover); }
   .logo:hover { color: var(--foret); }
   .site-footer a:hover { color: var(--blanc); }
 }
@@ -146,6 +172,14 @@ em { font-style: italic; }
 .btn--block { display: flex; width: 100%; }
 
 .btn--light { background: var(--creme); color: var(--foret); }
+
+/* Bouton secondaire en contour : laisse le seul bouton plein à l'offre recommandée */
+.btn--outline {
+  background: transparent;
+  color: var(--sauge);
+  box-shadow: inset 0 0 0 1.5px var(--sauge);
+}
+
 .btn--light:focus-visible { outline-color: var(--creme); }
 
 /* Liens texte soulignés */
@@ -578,9 +612,12 @@ em { font-style: italic; }
   padding-bottom: var(--section-y);
 }
 .soins__photo {
-  position: relative;
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
   flex: 1 1 380px;
   min-width: 0;
+  height: min(760px, calc(100vh - 140px));
   min-height: 560px;
 }
 .soins__photo img {
@@ -590,6 +627,12 @@ em { font-style: italic; }
   height: 100%;
   object-fit: cover;
 }
+.soins__photo-alt {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.soins__photo.is-visage .soins__photo-alt { opacity: 1; }
+
 .soins__card {
   flex: 1.35 1 560px;
   min-width: 0;
@@ -665,6 +708,173 @@ em { font-style: italic; }
   font-size: 14px;
   color: var(--taupe);
   text-align: center;
+}
+
+/* Navigation entre catégories */
+.soins__nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: -20px;
+  font-size: 15px;
+  color: var(--taupe);
+}
+.soins__nav a {
+  color: var(--sauge);
+  font-weight: 600;
+  text-underline-offset: 5px;
+}
+
+/* Catégorie (drainage, visage) */
+.soin-cat {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  scroll-margin-top: 110px;
+}
+.soin-cat__head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.soin-cat__title {
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+/* Prestations d'une catégorie */
+.prest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prest { display: flex; flex-direction: column; gap: 4px; }
+.menu-line--md .menu-line__name {
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.25;
+}
+.menu-line--md .menu-line__price { font-size: 24px; line-height: 1; }
+.prest__dur {
+  font-family: var(--font-texte);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sauge);
+  white-space: nowrap;
+}
+.prest__desc {
+  max-width: 34em;
+  font-size: 15px;
+  color: var(--taupe);
+}
+
+/* Bloc cures : fond Lin léger pour le distinguer des séances à l'unité */
+.cures {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 24px 24px;
+  background: var(--creme);
+  border-radius: var(--rayon-papier);
+}
+.cures .menu-line { --menu-fond: var(--creme); }
+.cures__title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--prune);
+}
+.cures__title span { color: var(--taupe); letter-spacing: 0.08em; text-transform: none; font-size: 14px; }
+.prest-list--cures { gap: 14px; }
+.prest-list--cures .menu-line--md .menu-line__name { font-size: 20px; }
+.prest-list--cures .prest__desc { font-size: 14px; }
+
+/* Soin conseillé : annoté « à la main » par Violette (nom entouré, flèche,
+   petit mot), plutôt qu'un badge ou un fond surligné. */
+.note-reco { position: relative; padding-top: 4px; }
+.note-reco__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-left: 70px;
+  margin-bottom: -4px;
+  font-family: var(--font-titre);
+  font-style: italic;
+  font-size: 21px;
+  line-height: 1.2;
+  color: var(--prune);
+  transform: rotate(-2deg);
+  transform-origin: left bottom;
+}
+.note-reco__arrow {
+  flex: none;
+  width: 44px;
+  height: 36px;
+  margin-top: 6px;
+  fill: none;
+  stroke: var(--prune);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.note-reco__circled { position: relative; display: inline-block; margin-right: 10px; }
+.note-reco__circled svg {
+  position: absolute;
+  fill: none;
+  stroke: var(--prune);
+  stroke-width: 2;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 0;
+}
+.note-reco__ring {
+  left: -14px;
+  top: -10px;
+  width: calc(100% + 28px);
+  height: calc(100% + 18px);
+}
+/* Le cercle se trace quand le soin arrive à l'écran (classe posée par main.js) */
+.js-trace .note-reco__circled svg { stroke-dashoffset: 600; }
+.js-trace .note-reco.is-drawn .note-reco__circled svg {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.2s 0.2s ease-out;
+}
+
+.prest__btn { align-self: flex-start; margin-top: 8px; padding-block: 10px; }
+
+/* Cures : ancien prix barré et économie chiffrée */
+.price-old {
+  margin-right: 6px;
+  font-size: 0.7em;
+  color: var(--taupe);
+  text-decoration-thickness: 1px;
+}
+.save-tag {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 8px;
+  border-radius: var(--rayon-pilule);
+  background: rgba(74, 107, 79, 0.12);
+  color: var(--sauge);
+  font-weight: 600;
+}
+
+/* « dès » devant un prix */
+.price-from {
+  font-family: var(--font-texte);
+  font-size: 0.6em;
+  font-weight: 600;
+  color: var(--taupe);
+  vertical-align: 0.15em;
 }
 
 /* ---------- 8. Ta séance ---------- */
@@ -1276,7 +1486,33 @@ em { font-style: italic; }
 
   /* Carte des soins */
   .soins__inner { gap: 32px; padding-top: 88px; }
-  .soins__photo { flex-basis: 100%; min-height: 0; aspect-ratio: 4 / 3; }
+  .soins__photo { position: relative; top: auto; flex-basis: 100%; height: auto; min-height: 0; aspect-ratio: 4 / 3; }
+  .soins__nav { margin-top: -12px; }
+  .soin-cat { gap: 24px; scroll-margin-top: 24px; }
+  .soin-cat__title { font-size: 28px; }
+  .menu-line--md .menu-line__name { font-size: 20px; padding-right: 16px; }
+  .menu-line--md .menu-line__price { font-size: 22px; }
+  .prest-list--cures .menu-line--md .menu-line__name { font-size: 18px; }
+  .cures { padding: 18px 16px 20px; }
+  .note-reco__note { margin-left: 34px; font-size: 18px; }
+  .note-reco__arrow { width: 36px; height: 30px; }
+  /* Sur téléphone, le nom peut passer sur deux lignes : le cercle couperait
+     le texte, on le remplace par un soulignement « à la main » qui suit
+     chaque ligne. */
+  .note-reco__circled {
+    display: inline;
+    margin-right: 0;
+    padding-bottom: 7px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8C45 3 95 10 140 6C165 4 185 5 197 7' fill='none' stroke='%237A5270' stroke-width='2' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") left bottom / 100% 9px no-repeat;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .note-reco__ring { display: none; }
+  /* « trois rituels d'une heure » est déjà dit plus haut : évite un « · 1h » isolé */
+  #soins-visage .note-reco .prest__dur { display: none; }
+  .prest__btn { align-self: stretch; }
+  /* Le sur-titre « En cure · 5 séances » suffit : on libère de la place pour le prix barré */
+  .prest-list--cures .prest__dur { display: none; }
   .soins__photo img { border-radius: 4px; }
   .soins__card {
     flex-basis: 100%;
@@ -1391,4 +1627,194 @@ em { font-style: italic; }
 
 @media (prefers-reduced-motion: reduce) {
   .mobile-cta { transition: none; }
+  .soins__photo-alt { transition: none; }
+  .js-trace .note-reco__circled svg { stroke-dashoffset: 0; transition: none; }
+}
+
+/* ==========================================================================
+   16. Pages légales (mentions légales, politique de confidentialité)
+   Même charte que l'accueil, en plus sobre : une seule colonne
+   à largeur de lecture, alignée entre l'en-tête de page et le texte.
+   ========================================================================== */
+
+.container.legal-wrap { max-width: calc(760px + 2 * var(--marge)); }
+
+/* En-tête de page */
+.legal-hero {
+  background: var(--lin);
+  border-bottom: 1px solid var(--filet-fin);
+}
+.legal-hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding-top: 48px;
+  padding-bottom: 64px;
+}
+.legal-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.legal-back:hover { text-decoration: underline; text-underline-offset: 4px; }
+.legal-hero__title {
+  font-weight: 300;
+  font-size: 64px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.legal-hero__title em { color: var(--sauge); }
+.legal-hero__lead {
+  font-size: 19px;
+  color: var(--taupe);
+}
+.legal-hero__date {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--taupe);
+}
+.legal-hero__date .ornament { flex-shrink: 0; }
+
+/* Texte */
+.legal-body {
+  padding-block: 72px var(--section-y);
+  counter-reset: legal;
+}
+.legal-section {
+  counter-increment: legal;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-block: 40px;
+  border-top: 1px solid var(--filet);
+}
+.legal-section:first-child { padding-top: 0; border-top: 0; }
+.legal-section h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-size: 30px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.legal-section h2::before {
+  content: counter(legal, decimal-leading-zero);
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--prune);
+}
+.legal-section p,
+.legal-section li { line-height: 1.7; }
+.legal-section ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+.legal-section ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.legal-section ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sauge);
+}
+.legal-section a { text-underline-offset: 4px; overflow-wrap: anywhere; }
+.legal-section strong { font-weight: 600; }
+.legal-soft { color: var(--taupe); }
+
+/* Fiche d'identité */
+.legal-card {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 12px 32px;
+  margin: 0;
+  padding: 32px 36px;
+  background: var(--blanc);
+  border-radius: var(--rayon-papier);
+  box-shadow:
+    inset 0 0 0 8px var(--blanc),
+    inset 0 0 0 9px rgba(107, 101, 96, 0.3);
+}
+.legal-card dt {
+  padding-top: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.7;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--taupe);
+}
+.legal-card dd { margin: 0; }
+
+/* Encadré important */
+.legal-note {
+  padding: 22px 26px;
+  border-left: 3px solid var(--sauge);
+  border-radius: 0 12px 12px 0;
+  background: var(--lin);
+}
+
+/* Information à compléter avant mise en ligne */
+.todo {
+  padding: 1px 6px;
+  border: 1px dashed var(--taupe);
+  border-radius: 4px;
+  background: var(--lin);
+  color: var(--foret);
+  font-weight: 600;
+  font-size: 0.94em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Modèle de formulaire */
+.legal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px 28px;
+  border: 1.5px dashed var(--filet);
+  border-radius: 12px;
+  font-size: 15.5px;
+}
+.legal-form p { line-height: 1.6; }
+
+.site-footer__legal a[aria-current="page"] {
+  color: var(--creme);
+  text-decoration-thickness: 1px;
+}
+
+/* Pages légales : téléphone */
+@media (max-width: 760px) {
+  .legal-hero__inner { gap: 16px; padding-top: 24px; padding-bottom: 44px; }
+  .legal-back { margin-bottom: 0; }
+  .legal-hero__title { font-size: clamp(38px, 11vw, 48px); }
+  .legal-hero__lead { font-size: 17px; }
+  .legal-body { padding-top: 48px; }
+  .legal-section { padding-block: 36px; }
+  .legal-section h2 { font-size: 25px; gap: 12px; }
+  .legal-section h2::before { font-size: 17px; }
+  .legal-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    padding: 24px 22px;
+  }
+  .legal-card dd + dt { margin-top: 12px; }
+  .legal-note { padding: 18px 20px; }
+  .legal-form { padding: 20px; font-size: 15px; }
 }

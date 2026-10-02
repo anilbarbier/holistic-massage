@@ -6,15 +6,17 @@
 <meta name="theme-color" content="#F7F4EF">
 <title>Violette Holistic Massage — Massages bien-être, métropole lilloise</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&amp;family=Nunito+Sans:wght@300;400;600&amp;display=swap" rel="stylesheet">
+<!-- Polices hébergées sur le site (aucun appel à Google) -->
+<link rel="preload" as="font" type="font/woff2" href="fonts/fraunces-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/nunito-sans-latin.woff2" crossorigin>
 
 <!-- Photo du hero chargée en priorité -->
 <link rel="preload" as="image" href="images/IMG_0067-1600.webp" imagesrcset="images/IMG_0067-800.webp 800w, images/IMG_0067-1600.webp 1600w" imagesizes="100vw" fetchpriority="high">
 
-<link rel="stylesheet" href="css/style.css?v=4">
-<script src="js/main.js?v=4" defer></script>
+<!-- Signale que JavaScript est actif, avant le premier affichage (évite un flash des animations) -->
+<script>document.documentElement.classList.add('js');</script>
+<link rel="stylesheet" href="css/style.css?v=16">
+<script src="js/main.js?v=7" defer></script>
 </head>
 <body>
 
@@ -50,11 +52,11 @@
       <div class="hero__menu">
         <p class="menu-line">
           <span class="menu-line__name"><span class="menu-line__label">Drainage lymphatique holistique</span></span>
-          <span class="menu-line__price">80&nbsp;€</span>
+          <span class="menu-line__price"><span class="price-from">dès</span> 45&nbsp;€</span>
         </p>
         <p class="menu-line">
-          <span class="menu-line__name"><span class="menu-line__label">Lift glow holistic</span></span>
-          <span class="menu-line__price">60&nbsp;€</span>
+          <span class="menu-line__name"><span class="menu-line__label">Soins visage</span></span>
+          <span class="menu-line__price">70&nbsp;€</span>
         </p>
       </div>
       <a href="#reserver" class="btn btn--lg btn--block" data-book>Réserver mon massage</a>
@@ -73,14 +75,14 @@
     <img class="respire__img" src="images/IMG_0069-1600.webp" srcset="images/IMG_0069-800.webp 800w, images/IMG_0069-1600.webp 1600w" sizes="100vw" width="1600" height="2400" loading="lazy" alt="Mains de Violette posées sur le visage d'une cliente, dans une lumière chaude et tamisée">
     <div class="respire__veil" aria-hidden="true"></div>
     <div class="respire__content">
-      <p class="respire__kicker">Respire.</p>
+      <p class="respire__kicker"><span class="respire__halo" aria-hidden="true"></span>Respire.</p>
       <h2 id="respire-title" class="respire__title">Les journées s'enchaînent.<br>Ici, rien ne presse.</h2>
       <p class="respire__text">Le temps d'un soin, tu poses tout&nbsp;: des mains attentives, des gestes lents, et tes épaules qui se relâchent enfin.</p>
     </div>
   </div>
 
   <div class="start">
-    <div class="start__card paper paper--wide">
+    <div class="start__card paper paper--wide" data-reveal>
       <svg class="leaf leaf--top" viewBox="0 0 120 160" aria-hidden="true"><path d="M62 156C58 120 66 78 56 8"/><path d="M60 128C42 122 31 108 34 94C48 99 57 112 60 128Z"/><path d="M61 104C79 98 89 84 86 70C72 75 63 88 61 104Z"/><path d="M59 80C42 74 34 60 37 47C50 52 58 65 59 80Z"/><path d="M58 56C73 49 80 36 77 25C65 30 58 42 58 56Z"/><path d="M57 32C49 26 46 18 48 10C55 14 58 22 57 32Z"/></svg>
       <svg class="leaf leaf--bottom" viewBox="0 0 120 160" aria-hidden="true"><path d="M62 156C58 120 66 78 56 8"/><path d="M60 128C42 122 31 108 34 94C48 99 57 112 60 128Z"/><path d="M61 104C79 98 89 84 86 70C72 75 63 88 61 104Z"/><path d="M59 80C42 74 34 60 37 47C50 52 58 65 59 80Z"/><path d="M58 56C73 49 80 36 77 25C65 30 58 42 58 56Z"/></svg>
 
@@ -89,25 +91,25 @@
       <div class="start__grid">
         <div class="choice">
           <h3 class="choice__title">Si c'est ton corps qui a besoin de se poser</h3>
-          <p class="choice__text">Un massage complet du corps à l'huile chaude, pour dénouer les tensions et te poser vraiment.</p>
+          <p class="choice__text">Un drainage lymphatique doux et rythmé. Pour une première fois, choisis le corps entier&nbsp;: c'est le soin le plus complet.</p>
           <p class="menu-line menu-line--choice">
-            <span class="menu-line__name"><span class="menu-line__label">Drainage lymphatique holistique · 1h15</span></span>
+            <span class="menu-line__name"><span class="menu-line__label">Drainage corps entier · 1h</span></span>
             <span class="menu-line__price">80&nbsp;€</span>
           </p>
-          <a href="#reserver" class="btn btn--md choice__btn" data-book>Réserver ce soin</a>
+          <a href="#soins-drainage" class="btn btn--md choice__btn">Voir les drainages</a>
         </div>
         <div class="choice">
           <h3 class="choice__title">Si c'est ton visage qui a besoin de douceur</h3>
-          <p class="choice__text">Un soin du visage et du cuir chevelu qui relâche les tensions du regard et de la mâchoire.</p>
+          <p class="choice__text">Trois rituels au choix. Pour une première fois, commence par le massage liftant japonais&nbsp;: des gestes précis qui réveillent tout le visage.</p>
           <p class="menu-line menu-line--choice">
-            <span class="menu-line__name"><span class="menu-line__label">Lift glow holistic · 45 min</span></span>
-            <span class="menu-line__price">60&nbsp;€</span>
+            <span class="menu-line__name"><span class="menu-line__label">Massage liftant japonais · 1h</span></span>
+            <span class="menu-line__price">70&nbsp;€</span>
           </p>
-          <a href="#reserver" class="btn btn--md choice__btn" data-book>Réserver ce soin</a>
+          <a href="#soins-visage" class="btn btn--md choice__btn">Voir les soins visage</a>
         </div>
       </div>
 
-      <p class="start__foot">Tu hésites&nbsp;? Réserve celui qui t'attire&nbsp;: on en parle ensemble à ton arrivée. <a href="#seance" class="text-link">Voir comment se passe une séance&nbsp;↓</a></p>
+      <p class="start__foot">Tu hésites&nbsp;? Réserve celui qui t'attire&nbsp;: on en parle ensemble à ton arrivée, et on peut ajuster. <a href="#seance" class="text-link">Voir comment se passe une séance&nbsp;↓</a></p>
     </div>
   </div>
 </section>
@@ -115,8 +117,9 @@
 <!-- 4. LA CARTE DES SOINS -->
 <section id="soins" class="soins" aria-labelledby="soins-title">
   <div class="soins__inner container">
-    <div class="soins__photo">
+    <div class="soins__photo" data-reveal>
       <img src="images/IMG_0279-1600.webp" srcset="images/IMG_0279-800.webp 800w, images/IMG_0279-1600.webp 1600w" sizes="(min-width: 1000px) 480px, 100vw" width="1600" height="2400" loading="lazy" alt="Deux mains posées sur le ventre d'une cliente couverte de serviettes brodées en vert">
+      <img class="soins__photo-alt" src="images/IMG_0069-1600.webp" srcset="images/IMG_0069-800.webp 800w, images/IMG_0069-1600.webp 1600w" sizes="(min-width: 1000px) 480px, 100vw" width="1600" height="2400" loading="lazy" alt="" aria-hidden="true">
     </div>
 
     <div class="soins__card">
@@ -125,26 +128,109 @@
         <h2 id="soins-title" class="soins__title">La carte des soins</h2>
       </div>
 
-      <article class="soin">
-        <div class="menu-line menu-line--lg">
-          <h3 class="menu-line__name"><span class="menu-line__label">Drainage lymphatique holistique</span></h3>
-          <span class="menu-line__price">80&nbsp;€</span>
+      <nav class="soins__nav" aria-label="Catégories de soins">
+        <a href="#soins-drainage">Drainage lymphatique</a>
+        <span aria-hidden="true">·</span>
+        <a href="#soins-visage">Soins visage</a>
+      </nav>
+
+      <article class="soin-cat" id="soins-drainage" aria-labelledby="cat-drainage-title">
+        <header class="soin-cat__head">
+          <p class="soin__meta">Corps · en entier ou par zone</p>
+          <h3 id="cat-drainage-title" class="soin-cat__title">Drainage lymphatique holistique</h3>
+          <p class="soin__desc">Des gestes lents, doux et rythmés qui allègent le corps et apaisent l'esprit. Tu repars avec une vraie sensation de légèreté.</p>
+        </header>
+        <ul class="prest-list">
+          <li class="prest note-reco">
+            <p class="note-reco__note"><svg class="note-reco__arrow" viewBox="0 0 60 50" aria-hidden="true"><path d="M56 10C38 8 20 18 12 40"/><path d="M6 30l6 11 11-5"/></svg><span>Mon conseil pour une première fois</span></p>
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label"><span class="note-reco__circled">Corps entier<svg class="note-reco__ring" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M150 9C112 1 40 3 14 16C-6 27 6 49 52 54C104 59 176 54 192 36C204 22 182 8 128 6"/></svg></span>&nbsp;<span class="prest__dur">·&nbsp;1h</span></span></span>
+              <span class="menu-line__price">80&nbsp;€</span>
+            </p>
+            <p class="prest__desc">Le soin complet, de la tête aux pieds, pour ressentir tout l'effet du drainage.</p>
+            <a href="#reserver" class="btn btn--md prest__btn" data-book>Réserver ce soin</a>
+          </li>
+          <li class="prest">
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label">Jambes&nbsp;<span class="prest__dur">·&nbsp;30 min</span></span></span>
+              <span class="menu-line__price">45&nbsp;€</span>
+            </p>
+          </li>
+          <li class="prest">
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label">Ventre, bras ou dos&nbsp;<span class="prest__dur">·&nbsp;30 min</span></span></span>
+              <span class="menu-line__price">45&nbsp;€</span>
+            </p>
+          </li>
+        </ul>
+        <div class="cures">
+          <p class="cures__title">En cure <span>· 5 séances</span></p>
+          <ul class="prest-list prest-list--cures">
+          <li class="prest">
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label">Cure corps entier&nbsp;<span class="prest__dur">·&nbsp;5 séances</span></span></span>
+              <span class="menu-line__price"><s class="price-old"><span class="sr-only">au lieu de </span>400&nbsp;€</s> 350&nbsp;€</span>
+            </p>
+            <p class="prest__desc"><span class="save-tag">−50&nbsp;€</span> soit 70&nbsp;€ la séance au lieu de 80&nbsp;€</p>
+          </li>
+          <li class="prest">
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label">Cure jambes&nbsp;<span class="prest__dur">·&nbsp;5 séances</span></span></span>
+              <span class="menu-line__price"><s class="price-old"><span class="sr-only">au lieu de </span>225&nbsp;€</s> 200&nbsp;€</span>
+            </p>
+            <p class="prest__desc"><span class="save-tag">−25&nbsp;€</span> soit 40&nbsp;€ la séance au lieu de 45&nbsp;€</p>
+          </li>
+          </ul>
         </div>
-        <p class="soin__meta">Massage corps · 1h15</p>
-        <p class="soin__desc">Un massage complet du corps à l'huile chaude pour dénouer les tensions musculaires, stimuler la circulation et apaiser le système nerveux.</p>
-        <div class="soin__action"><a href="#reserver" class="btn btn--md" data-book>Réserver ce soin</a></div>
+        <div class="soin__action"><a href="#reserver" class="btn btn--md btn--outline" data-book>Réserver un autre drainage</a></div>
       </article>
 
       <hr class="soins__rule">
 
-      <article class="soin">
-        <div class="menu-line menu-line--lg">
-          <h3 class="menu-line__name"><span class="menu-line__label">Lift glow holistic</span></h3>
-          <span class="menu-line__price">60&nbsp;€</span>
+      <article class="soin-cat" id="soins-visage" aria-labelledby="cat-visage-title">
+        <header class="soin-cat__head">
+          <p class="soin__meta">Visage · trois rituels d'une heure</p>
+          <h3 id="cat-visage-title" class="soin-cat__title">Soins visage</h3>
+          <p class="soin__desc">Un vrai moment pour ton visage&nbsp;: les tensions du regard et de la mâchoire se relâchent, le teint s'éclaire. Choisis le rituel qui t'attire.</p>
+        </header>
+        <ul class="prest-list">
+          <li class="prest note-reco">
+            <p class="note-reco__note"><svg class="note-reco__arrow" viewBox="0 0 60 50" aria-hidden="true"><path d="M56 10C38 8 20 18 12 40"/><path d="M6 30l6 11 11-5"/></svg><span>Mon conseil pour un visage tonifié</span></p>
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label"><span class="note-reco__circled">Massage liftant japonais<svg class="note-reco__ring" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M150 9C112 1 40 3 14 16C-6 27 6 49 52 54C104 59 176 54 192 36C204 22 182 8 128 6"/></svg></span>&nbsp;<span class="prest__dur">·&nbsp;1h</span></span></span>
+              <span class="menu-line__price">70&nbsp;€</span>
+            </p>
+            <p class="prest__desc">Des gestes rapides et précis, inspirés du Kobido, pour tonifier et redessiner les traits.</p>
+            <a href="#reserver" class="btn btn--md prest__btn" data-book>Réserver ce soin</a>
+          </li>
+          <li class="prest">
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label">Miracle Face Crystal Rose&nbsp;<span class="prest__dur">·&nbsp;1h</span></span></span>
+              <span class="menu-line__price">70&nbsp;€</span>
+            </p>
+            <p class="prest__desc">Des pierres de quartz rose glissent sur le visage pour un soin frais et apaisant, au teint lumineux.</p>
+          </li>
+          <li class="prest">
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label">Massage Kansa Wand&nbsp;<span class="prest__dur">·&nbsp;1h</span></span></span>
+              <span class="menu-line__price">70&nbsp;€</span>
+            </p>
+            <p class="prest__desc">Une baguette en bronze venue d'Inde, utilisée en mouvements circulaires pour apaiser et rééquilibrer.</p>
+          </li>
+        </ul>
+        <div class="cures">
+          <p class="cures__title">En cure <span>· 5 séances</span></p>
+          <ul class="prest-list prest-list--cures">
+          <li class="prest">
+            <p class="menu-line menu-line--md">
+              <span class="menu-line__name"><span class="menu-line__label">Cure visage&nbsp;<span class="prest__dur">·&nbsp;5 séances</span></span></span>
+              <span class="menu-line__price"><s class="price-old"><span class="sr-only">au lieu de </span>350&nbsp;€</s> 300&nbsp;€</span>
+            </p>
+            <p class="prest__desc"><span class="save-tag">−50&nbsp;€</span> soit 60&nbsp;€ la séance au lieu de 70&nbsp;€, au choix parmi les trois soins</p>
+          </li>
+          </ul>
         </div>
-        <p class="soin__meta">Massage visage · 45 min</p>
-        <p class="soin__desc">Un soin du visage et du cuir chevelu qui relâche les tensions du regard et de la mâchoire, pour un teint reposé et lumineux.</p>
-        <div class="soin__action"><a href="#reserver" class="btn btn--md" data-book>Réserver ce soin</a></div>
+        <div class="soin__action"><a href="#reserver" class="btn btn--md btn--outline" data-book>Réserver un autre soin visage</a></div>
       </article>
 
       <p class="soins__note">Paiement&nbsp;: [moyens de paiement à préciser] · Annulation gratuite jusqu'à [X h] avant le rendez-vous</p>
@@ -161,7 +247,7 @@
       <p class="section-intro">Je sais qu'un premier massage, c'est un petit pas&nbsp;: on ne sait pas trop comment ça va se passer, ni à quoi s'attendre. Alors voici tout, étape par étape, pour que tu arrives l'esprit tranquille.</p>
     </div>
 
-    <ol class="steps">
+    <ol class="steps" data-reveal>
       <li class="step">
         <img class="step__img" src="images/IMG_0047-800.webp" width="800" height="1200" loading="lazy" alt="Les mains de Violette autour du pied d'une cliente, en noir et blanc">
         <span class="step__num" aria-hidden="true">01</span>
@@ -188,7 +274,7 @@
         <h3 class="step__title">Le massage</h3>
         <p class="step__text">Tu t'installes confortablement et tu te laisses porter. Tu peux me dire à tout moment ce qui te convient.</p>
         <ul class="check-list step__details">
-          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>1h15 pour le corps, 45 min pour le visage</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>1h pour un soin complet, 30 min pour une zone ciblée</span></li>
           <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>Ce que tu gardes sur toi&nbsp;: [à préciser]</span></li>
         </ul>
       </li>
@@ -304,6 +390,10 @@
         <p class="faq__a">Si tu es enceinte, si tu as un problème de santé ou un traitement en cours, parles-en-moi avant de réserver. On verra ensemble si le soin est adapté. [Liste précise à confirmer]</p>
       </details>
       <details class="faq__item">
+        <summary><span class="faq__q">Une séance suffit-elle, ou vaut-il mieux faire une cure&nbsp;?</span><svg class="faq__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+        <p class="faq__a">Une seule séance fait déjà beaucoup de bien. Si tu veux en profiter plus durablement, la cure de 5 séances permet d'installer une régularité, à un tarif plus doux. [Rythme conseillé entre les séances à préciser]</p>
+      </details>
+      <details class="faq__item">
         <summary><span class="faq__q">Comment annuler ou déplacer mon rendez-vous&nbsp;?</span><svg class="faq__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
         <p class="faq__a">Directement depuis l'e-mail de confirmation. L'annulation est gratuite jusqu'à [X h] avant.</p>
       </details>
@@ -395,7 +485,7 @@
     </div>
     <div class="site-footer__bottom">
       <span>© 2026 Violette Holistic Massage · Massages bien-être, sans visée thérapeutique</span>
-      <span class="site-footer__legal"><a href="#">Mentions légales</a><a href="#">Politique de confidentialité</a></span>
+      <span class="site-footer__legal"><a href="mentions-legales.html">Mentions légales</a><a href="politique-de-confidentialite.html">Politique de confidentialité</a></span>
     </div>
   </div>
 </footer>
