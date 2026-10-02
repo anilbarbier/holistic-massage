@@ -15,8 +15,8 @@
 
 <!-- Signale que JavaScript est actif, avant le premier affichage (évite un flash des animations) -->
 <script>document.documentElement.classList.add('js');</script>
-<link rel="stylesheet" href="css/style.css?v=16">
-<script src="js/main.js?v=7" defer></script>
+<link rel="stylesheet" href="css/style.css?v=20">
+<script src="js/main.js?v=9" defer></script>
 </head>
 <body>
 
@@ -117,9 +117,12 @@
 <!-- 4. LA CARTE DES SOINS -->
 <section id="soins" class="soins" aria-labelledby="soins-title">
   <div class="soins__inner container">
-    <div class="soins__photo" data-reveal>
+    <!-- Test « mixed media » : grain, cadre esquissé et feuillage (décoratifs) -->
+    <div class="soins__photo mixed" data-reveal>
+      <svg class="mixed__frame" data-seed="11" aria-hidden="true"><path/></svg>
       <img src="images/IMG_0279-1600.webp" srcset="images/IMG_0279-800.webp 800w, images/IMG_0279-1600.webp 1600w" sizes="(min-width: 1000px) 480px, 100vw" width="1600" height="2400" loading="lazy" alt="Deux mains posées sur le ventre d'une cliente couverte de serviettes brodées en vert">
       <img class="soins__photo-alt" src="images/IMG_0069-1600.webp" srcset="images/IMG_0069-800.webp 800w, images/IMG_0069-1600.webp 1600w" sizes="(min-width: 1000px) 480px, 100vw" width="1600" height="2400" loading="lazy" alt="" aria-hidden="true">
+      <svg class="mixed__sprig" viewBox="0 0 120 160" aria-hidden="true"><path d="M62 156C58 120 66 78 56 8"/><path d="M60 128C42 122 31 108 34 94C48 99 57 112 60 128Z"/><path d="M61 104C79 98 89 84 86 70C72 75 63 88 61 104Z"/><path d="M59 80C42 74 34 60 37 47C50 52 58 65 59 80Z"/><path d="M58 56C73 49 80 36 77 25C65 30 58 42 58 56Z"/></svg>
     </div>
 
     <div class="soins__card">
@@ -297,9 +300,12 @@
 <!-- 6. JE SUIS VIOLETTE -->
 <section class="about" aria-labelledby="about-title">
   <div class="about__inner container">
-    <div class="about__photos">
+    <!-- Test « mixed media » : grain, cadre esquissé et feuillage (décoratifs) -->
+    <div class="about__photos mixed" data-reveal>
+      <svg class="mixed__frame" data-seed="7" aria-hidden="true"><path/></svg>
       <img class="about__portrait" src="images/IMG_0054-800.webp" width="800" height="1200" loading="lazy" alt="Portrait de Violette, souriante, penchée sur la table de massage, en noir et blanc">
       <img class="about__inset" src="images/IMG_0253-800.webp" width="800" height="1200" loading="lazy" alt="Violette de profil pendant un massage des jambes, en noir et blanc">
+      <svg class="mixed__sprig" viewBox="0 0 120 160" aria-hidden="true"><path d="M62 156C58 120 66 78 56 8"/><path d="M60 128C42 122 31 108 34 94C48 99 57 112 60 128Z"/><path d="M61 104C79 98 89 84 86 70C72 75 63 88 61 104Z"/><path d="M59 80C42 74 34 60 37 47C50 52 58 65 59 80Z"/><path d="M58 56C73 49 80 36 77 25C65 30 58 42 58 56Z"/></svg>
     </div>
     <div class="about__text">
       <p class="eyebrow">Qui suis-je</p>

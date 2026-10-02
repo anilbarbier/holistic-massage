@@ -59,6 +59,9 @@
   --rayon-papier: 4px;
   --ombre-flottante: 0 24px 60px rgba(46, 58, 48, 0.16);
 
+  /* Animations : courbe douce, sans rebond (brief, section 6) */
+  --ease-doux: cubic-bezier(0.22, 1, 0.36, 1);
+
   /* Hauteur de l'en-tête (pour les ancres) */
   --header-h: 89px;
 
@@ -163,7 +166,7 @@ em { font-style: italic; }
   line-height: 1.6;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s var(--ease-doux);
 }
 .btn:focus-visible { border-radius: var(--rayon-pilule); }
 
@@ -346,6 +349,7 @@ em { font-style: italic; }
 /* ---------- 4. En-tête collant ---------- */
 .site-header {
   position: sticky;
+  isolation: isolate;
   top: 0;
   z-index: 10;
   background: rgba(247, 244, 239, 0.94);
@@ -353,6 +357,19 @@ em { font-style: italic; }
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--lin);
 }
+/* Ombre légère une fois le hero dépassé (classe posée par main.js).
+   Portée par un pseudo-élément pour n'animer que son opacité. */
+.site-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  box-shadow: 0 10px 30px rgba(46, 58, 48, 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.site-header.is-scrolled::after { opacity: 1; }
 .site-header__inner {
   display: flex;
   justify-content: space-between;
@@ -504,7 +521,7 @@ em { font-style: italic; }
   font-style: italic;
   font-weight: 300;
   font-size: 26px;
-  color: rgba(247, 244, 239, 0.85);
+  color: var(--creme);   /* plein, pour garder 3:1 au pic du halo */
 }
 .respire__title {
   font-weight: 300;
@@ -629,7 +646,7 @@ em { font-style: italic; }
 }
 .soins__photo-alt {
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease-in-out;
 }
 .soins__photo.is-visage .soins__photo-alt { opacity: 1; }
 
@@ -1164,9 +1181,11 @@ em { font-style: italic; }
   stroke: var(--sauge);
   stroke-width: 1.6;
   stroke-linecap: round;
-  transition: transform 0.2s ease;
+  transition: transform 0.4s var(--ease-doux);
 }
 .faq__item[open] .faq__icon { transform: rotate(45deg); }
+/* Pendant la fermeture animée (main.js), le « + » pivote dès le clic */
+.faq__item.is-closing .faq__icon { transform: none; }
 .faq__a {
   max-width: 40em;
   margin: 7px 0;
@@ -1625,9 +1644,281 @@ em { font-style: italic; }
   .step { flex-basis: 86%; }
 }
 
+/* ==========================================================================
+   15 bis. Animations (brief, section 6)
+   Lentes et douces, une seule fois, sans rebond. Uniquement transform et
+   opacity (plus clip-path et tracés SVG là où le brief le prévoit) : aucun
+   décalage de mise en page.
+   Tout ce qui bouge est enfermé dans « prefers-reduced-motion:
+   no-preference » : avec le réglage « réduire les animations », la page
+   s'affiche directement, sans mouvement.
+   Les états de départ masqués ne s'appliquent que si JavaScript est actif
+   (classe .js posée dans le <head>) ; main.js ajoute .is-visible quand le
+   bloc est visible à 15 %. Le titre, la photo et les boutons ne sont
+   jamais masqués.
+   ========================================================================== */
+
+/* Halo derrière « Respire. » (statique si les animations sont réduites) */
+.respire__kicker {
+  position: relative;
+  isolation: isolate;
+}
+.respire__halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  width: 520px;
+  height: 520px;
+  margin: -260px 0 0 -260px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(247, 244, 239, 0.16), rgba(247, 244, 239, 0.12) 30%, rgba(247, 244, 239, 0.05) 65%, rgba(247, 244, 239, 0));
+  pointer-events: none;
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* 1. Carte « Ta prochaine séance » : fondu + montée de 16 px */
+  .hero__card { animation: monte-16 0.8s var(--ease-doux) 0.3s both; }
+
+  /* 2. Photo du hero : légère mise au point (affichée immédiatement) */
+  .hero__media img { animation: mise-au-point 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+  /* 3. Respiration du halo : une seule respiration de 5 s (2,5 s
+        d'inspiration, 2,5 s d'expiration), puis il reste au repos.
+        5 s maximum : aucun bouton pause requis (WCAG 2.2.2). */
+  .respire__halo { animation: respiration 5s ease-in-out 1 both; }
+  .respire__halo.is-paused { animation-play-state: paused; }
+
+  /* 4. Feuillage de « Par où commencer ? » : tracé trait par trait en 1,6 s
+        (longueur de chaque trait calculée par main.js dans --len) */
+  .js .leaf path {
+    stroke-dasharray: var(--len, 400);
+    stroke-dashoffset: var(--len, 400);
+  }
+  .js .is-visible .leaf path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.6s ease-in-out var(--trait, 0s);
+  }
+  :is(.leaf, .mixed__sprig) path:nth-child(2) { --trait: 0.2s; }
+  :is(.leaf, .mixed__sprig) path:nth-child(3) { --trait: 0.4s; }
+  :is(.leaf, .mixed__sprig) path:nth-child(4) { --trait: 0.6s; }
+  :is(.leaf, .mixed__sprig) path:nth-child(5) { --trait: 0.8s; }
+  :is(.leaf, .mixed__sprig) path:nth-child(6) { --trait: 1s; }
+
+  /* 5. Photo de la carte des soins : dévoilée de bas en haut.
+        Le masque est posé sur les images et non sur le bloc observé :
+        un bloc entièrement masqué ne serait jamais vu comme « à l'écran ». */
+  .js .soins__photo img { clip-path: inset(100% 0 0 0); }
+  .js .soins__photo.is-visible img {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1s var(--ease-doux), opacity 0.5s ease-in-out;
+  }
+
+  /* 7. Étapes de la séance : l'une après l'autre (décalage de 0,12 s) */
+  .step:nth-child(2) { --i: 1; }
+  .step:nth-child(3) { --i: 2; }
+  .step:nth-child(4) { --i: 3; }
+  .js .steps .step {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .js .steps.is-visible .step {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.8s var(--ease-doux), transform 0.8s var(--ease-doux);
+    transition-delay: calc(var(--i, 0) * 0.12s);
+  }
+
+  /* 8. Coches des détails pratiques : tracées l'une après l'autre (0,4 s),
+        juste après l'apparition de leur étape */
+  .step__details li + li { --j: 1; }
+  .js .steps .check path {
+    stroke-dasharray: 21;
+    stroke-dashoffset: 21;
+  }
+  .js .steps.is-visible .check path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.4s ease-out;
+    transition-delay: calc(var(--i, 0) * 0.12s + 0.6s + var(--j, 0) * 0.4s);
+  }
+
+  /* 9. Avis : fondu enchaîné d'un avis à l'autre (classes posées par main.js) */
+  .review.is-entering { animation: fondu-entree 0.6s ease both; }
+  .review.is-leaving { animation: fondu-sortie 0.6s ease both; pointer-events: none; }
+
+  /* Test « mixed media » (section 15 ter) : cadre esquissé, puis feuillage,
+     une seule fois, après l'apparition de la photo */
+  .js .mixed__frame path {
+    stroke-dasharray: var(--len, 4000);
+    stroke-dashoffset: var(--len, 4000);
+  }
+  .js .mixed.is-visible .mixed__frame path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1.2s ease-in-out calc(var(--mixed-delay) + 0.2s);
+  }
+  .js .mixed__sprig path {
+    stroke-dasharray: var(--len, 400);
+    stroke-dashoffset: var(--len, 400);
+  }
+  .js .mixed.is-visible .mixed__sprig path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.5s ease-in-out calc(var(--mixed-delay) + 0.8s + var(--trait, 0s) * 0.8);
+  }
+  /* Le grain de la photo des soins attend que la photo soit dévoilée */
+  .js .soins__photo.mixed::after { opacity: 0; }
+  .js .soins__photo.mixed.is-visible::after { opacity: 0.34; transition: opacity 1s ease; }
+
+  /* 10. Boutons qui s'enfoncent légèrement au clic */
+  .btn:active { transform: scale(0.98); }
+}
+
+/* ==========================================================================
+   15 ter. Test « mixed media » : photo + dessin vectoriel + grain
+   Esprit « carnet de Violette » : la photo est tirée sur papier grainé,
+   un cadre esquissé à main levée la décale et un brin de feuillage déborde. Tout est décoratif
+   (aria-hidden), sans texte ajouté, loin des boutons de réservation.
+   Le tracé du cadre est généré par main.js à la taille réelle de la photo.
+   Pour retirer le test : supprimer la classe « mixed » et ses éléments
+   dans index.html, et cette section.
+   ========================================================================== */
+:root {
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.mixed {
+  isolation: isolate;
+  --mixed-delay: 0s;
+  --frame-dx: 14px;
+  --frame-dy: 14px;
+}
+/* Grain argentique : en « incrustation », il marque les photos et reste
+   quasi invisible sur le fond Crème */
+.mixed::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: var(--grain) 0 0 / 180px;
+  mix-blend-mode: overlay;
+  opacity: 0.34;
+  pointer-events: none;
+}
+/* Cadre esquissé, décalé, glissé derrière la photo */
+.mixed__frame {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: var(--sauge);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  opacity: 0.75;
+  pointer-events: none;
+}
+/* Brin de feuillage qui déborde de la photo */
+.mixed__sprig {
+  position: absolute;
+  z-index: 2;
+  fill: none;
+  stroke: var(--sauge);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.8;
+  pointer-events: none;
+}
+/* Les débords décoratifs ne doivent jamais créer de défilement horizontal
+   (« clip » ne gêne pas la photo collée de la carte des soins) */
+.about,
+.soins { overflow-x: clip; }
+
+/* Emplacement 1 : photos de « Je suis Violette » (cadre autour du portrait).
+   Le grain ne couvre que le portrait, pas le fond autour. */
+.about__photos.mixed { --frame-dx: -14px; }
+.about__photos.mixed::after {
+  right: 64px;
+  bottom: 64px;
+  border-radius: 16px;
+}
+.about__photos.mixed .mixed__frame {
+  width: calc(100% - 64px);
+  height: calc(100% - 64px);
+}
+.about__photos.mixed .mixed__sprig {
+  left: -38px;
+  bottom: 96px;
+  width: 78px;
+  height: 104px;
+  rotate: -28deg;
+}
+
+/* Emplacement 2 : photo collée de la carte des soins (après son dévoilement) */
+.soins__photo.mixed {
+  --mixed-delay: 0.6s;
+  --frame-dx: -14px;
+}
+.soins__photo.mixed .mixed__sprig {
+  right: -42px;
+  top: 64px;
+  width: 74px;
+  height: 100px;
+  rotate: 162deg;
+}
+
+@media (max-width: 1160px) {
+  .soins__photo.mixed .mixed__sprig { right: -18px; }
+}
+@media (max-width: 760px) {
+  .mixed { --frame-dx: 9px; --frame-dy: 9px; }
+  .soins__photo.mixed,
+  .about__photos.mixed { --frame-dx: -9px; }
+  .about__photos.mixed::after { right: 36px; bottom: 36px; }
+  .about__photos.mixed .mixed__frame { width: calc(100% - 36px); height: calc(100% - 36px); }
+  .about__photos.mixed .mixed__sprig { left: -14px; bottom: 60px; width: 56px; height: 76px; }
+  .soins__photo.mixed .mixed__sprig { right: -2px; top: -30px; width: 56px; height: 76px; }
+}
+
+/* Avis superposés pour pouvoir passer de l'un à l'autre en fondu */
+.reviews__slides { display: grid; }
+.review { grid-area: 1 / 1; }
+
+@keyframes monte-16 {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes mise-au-point {
+  from { transform: scale(1.04); }
+  to   { transform: none; }
+}
+@keyframes respiration {
+  0%, 100% { transform: scale(0.8); opacity: 0.55; }
+  50%      { transform: scale(1.15); opacity: 1; }
+}
+@keyframes fondu-entree {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fondu-sortie {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@media (max-width: 760px) {
+  .respire__halo { width: 340px; height: 340px; margin: -170px 0 0 -170px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .mobile-cta { transition: none; }
-  .soins__photo-alt { transition: none; }
+  .btn,
+  .mobile-cta,
+  .soins__photo-alt,
+  .faq__icon,
+  .site-header::after { transition: none; }
   .js-trace .note-reco__circled svg { stroke-dashoffset: 0; transition: none; }
 }
 
