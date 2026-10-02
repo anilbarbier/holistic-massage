@@ -84,6 +84,12 @@ html {
   html { scroll-behavior: smooth; }
 }
 
+/* Défilement fluide à la molette (Lenis, initialisé dans main.js).
+   Les liens d'ancre gardent le défilement natif ci-dessus. */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
 body {
   margin: 0;
   min-width: 320px;
@@ -1040,52 +1046,77 @@ em { font-style: italic; }
   gap: 52px;
   padding-block: var(--section-y);
 }
-.reviews__eyebrow { text-align: center; }
-.reviews__slides {
-  width: 100%;
-  max-width: 900px;
-}
-.review {
+.reviews__head {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
-  padding: 64px 72px 52px;
-  border: 1.5px dashed rgba(107, 101, 96, 0.6);
-  border-radius: 16px;
+  gap: 14px;
+}
+.reviews__head .ornament { width: 56px; height: 20px; }
+.reviews__eyebrow { text-align: center; }
+.reviews__slides {
+  width: 100%;
+  max-width: 980px;
+}
+/* Style éditorial : pas de cadre, la citation seule, un grand guillemet
+   prune en filigrane derrière le texte */
+.review {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 24px 40px 0;
   text-align: center;
 }
 .review[hidden] { display: none; }
 .review__mark {
-  height: 48px;
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
   font-family: var(--font-titre);
   font-variation-settings: 'SOFT' 100;
-  font-size: 120px;
-  line-height: 0.5;
+  font-size: 320px;
+  line-height: 1;
   color: var(--prune);
+  opacity: 0.1;
+  pointer-events: none;
 }
 .review__quote {
+  position: relative;
   font-family: var(--font-titre);
   font-variation-settings: 'SOFT' 100;
   font-style: italic;
   font-weight: 300;
-  font-size: 40px;
-  line-height: 1.3;
+  font-size: 46px;
+  line-height: 1.25;
   letter-spacing: -0.01em;
   color: var(--foret);
 }
 .review__caption {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  align-items: baseline;
+  gap: 14px;
+}
+/* Petit trait prune avant le prénom */
+.review__caption::before {
+  content: '';
+  align-self: center;
+  width: 32px;
+  height: 1px;
+  background: var(--prune);
 }
 .review__name {
-  font-size: 17px;
+  font-size: 13px;
   font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 .review__meta {
-  font-size: 15px;
+  font-family: var(--font-titre);
+  font-style: italic;
+  font-size: 16px;
   color: var(--taupe);
 }
 .reviews__dots {
@@ -1118,11 +1149,6 @@ em { font-style: italic; }
   background: var(--prune);
 }
 .dot:focus-visible { border-radius: 50%; }
-.reviews__source {
-  margin-top: -28px;
-  font-size: 14px;
-  color: var(--taupe);
-}
 
 /* ---------- 11. FAQ ---------- */
 .faq { background: var(--creme); }
@@ -1586,11 +1612,12 @@ em { font-style: italic; }
 
   /* Avis */
   .reviews__inner { gap: 40px; }
-  .review { gap: 20px; padding: 44px 22px 36px; }
-  .review__mark { height: 36px; font-size: 92px; }
-  .review__quote { font-size: 26px; }
+  .review { gap: 24px; padding: 16px 0 0; }
+  .review__mark { top: -20px; font-size: 220px; }
+  .review__quote { font-size: 28px; }
+  .review__caption { flex-direction: column; align-items: center; gap: 6px; }
+  .review__caption::before { margin-bottom: 6px; }
   .reviews__dots { margin-top: -16px; }
-  .reviews__source { margin-top: -20px; text-align: center; }
   .reviews__inner > .btn { width: 100%; }
 
   /* FAQ */
@@ -1884,9 +1911,12 @@ em { font-style: italic; }
   .soins__photo.mixed .mixed__sprig { right: -2px; top: -30px; width: 56px; height: 76px; }
 }
 
-/* Avis superposés pour pouvoir passer de l'un à l'autre en fondu */
-.reviews__slides { display: grid; }
-.review { grid-area: 1 / 1; }
+/* Avis superposés pour pouvoir passer de l'un à l'autre en fondu.
+   Les avis masqués gardent leur place (invisibles) : la zone prend la
+   hauteur du plus long, et les points comme le bouton ne bougent plus. */
+.reviews__slides { display: grid; touch-action: pan-y; }
+.review { grid-area: 1 / 1; justify-content: center; }
+.reviews__slides .review[hidden] { display: flex; visibility: hidden; }
 
 @keyframes monte-16 {
   from { opacity: 0; transform: translateY(16px); }

@@ -15,8 +15,9 @@
 
 <!-- Signale que JavaScript est actif, avant le premier affichage (évite un flash des animations) -->
 <script>document.documentElement.classList.add('js');</script>
-<link rel="stylesheet" href="css/style.css?v=20">
-<script src="js/main.js?v=9" defer></script>
+<link rel="stylesheet" href="css/style.css?v=21">
+<script src="js/vendor/lenis.min.js?v=1.3.26" defer></script>
+<script src="js/main.js?v=10" defer></script>
 </head>
 <body>
 
@@ -43,7 +44,7 @@
     <div class="hero__text">
       <p class="hero__kicker">Massages bien-être — métropole lilloise</p>
       <h1 class="hero__title">Un temps pour toi, <em>entre de bonnes mains.</em></h1>
-      <p class="hero__lead">Des massages holistiques du corps et du visage pour relâcher les tensions et retrouver un vrai moment de calme. Je t'accueille à [Ville], sur rendez-vous.</p>
+      <p class="hero__lead">Des massages holistiques du corps et du visage pour relâcher les tensions et retrouver un vrai moment de calme. Je t'accueille à Marcq-en-Barœul, sur rendez-vous.</p>
       <a href="#soins" class="text-link">Voir la carte des soins&nbsp;↓</a>
     </div>
 
@@ -131,15 +132,8 @@
         <h2 id="soins-title" class="soins__title">La carte des soins</h2>
       </div>
 
-      <nav class="soins__nav" aria-label="Catégories de soins">
-        <a href="#soins-drainage">Drainage lymphatique</a>
-        <span aria-hidden="true">·</span>
-        <a href="#soins-visage">Soins visage</a>
-      </nav>
-
       <article class="soin-cat" id="soins-drainage" aria-labelledby="cat-drainage-title">
         <header class="soin-cat__head">
-          <p class="soin__meta">Corps · en entier ou par zone</p>
           <h3 id="cat-drainage-title" class="soin-cat__title">Drainage lymphatique holistique</h3>
           <p class="soin__desc">Des gestes lents, doux et rythmés qui allègent le corps et apaisent l'esprit. Tu repars avec une vraie sensation de légèreté.</p>
         </header>
@@ -192,7 +186,6 @@
 
       <article class="soin-cat" id="soins-visage" aria-labelledby="cat-visage-title">
         <header class="soin-cat__head">
-          <p class="soin__meta">Visage · trois rituels d'une heure</p>
           <h3 id="cat-visage-title" class="soin-cat__title">Soins visage</h3>
           <p class="soin__desc">Un vrai moment pour ton visage&nbsp;: les tensions du regard et de la mâchoire se relâchent, le teint s'éclaire. Choisis le rituel qui t'attire.</p>
         </header>
@@ -267,8 +260,6 @@
         <h3 class="step__title">On prend le temps d'échanger</h3>
         <p class="step__text">À ton arrivée, on parle de tes besoins et de tes envies du jour, sans pression.</p>
         <ul class="check-list step__details">
-          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>Environ [X] min, compris dans la séance</span></li>
-          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>Tu me dis tes zones sensibles et ce que tu préfères éviter</span></li>
         </ul>
       </li>
       <li class="step">
@@ -276,20 +267,12 @@
         <span class="step__num" aria-hidden="true">03</span>
         <h3 class="step__title">Le massage</h3>
         <p class="step__text">Tu t'installes confortablement et tu te laisses porter. Tu peux me dire à tout moment ce qui te convient.</p>
-        <ul class="check-list step__details">
-          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>1h pour un soin complet, 30 min pour une zone ciblée</span></li>
-          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>Ce que tu gardes sur toi&nbsp;: [à préciser]</span></li>
-        </ul>
       </li>
       <li class="step">
         <img class="step__img" src="images/IMG_0278-800.webp" width="800" height="1200" loading="lazy" alt="Gros plan d'une main posée sur le ventre, pull vert">
         <span class="step__num" aria-hidden="true">04</span>
         <h3 class="step__title">Un temps calme avant de repartir</h3>
         <p class="step__text">On ne se presse pas&nbsp;: tu reprends doucement tes repères avant de retrouver ta journée.</p>
-        <ul class="check-list step__details">
-          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>Tu te rhabilles à ton rythme</span></li>
-          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>[Petit plus à préciser&nbsp;: tisane, verre d'eau…]</span></li>
-        </ul>
       </li>
     </ol>
 
@@ -311,7 +294,7 @@
       <p class="eyebrow">Qui suis-je</p>
       <h2 id="about-title" class="about__title">Je suis Violette.</h2>
       <p class="about__p">Depuis [3] ans, j'accompagne des femmes qui ont besoin de souffler. Mon approche est tournée vers le bien-être et la relaxation&nbsp;: écouter ton corps, respecter ton rythme, et t'offrir un vrai moment de détente.</p>
-      <p class="about__p about__p--soft">Pour moi, un massage, ce n'est pas seulement des gestes. C'est un temps d'écoute, dans un cadre doux où tu peux enfin lâcher prise.</p>
+      <p class="about__p about__p--soft">Pour moi, un massage, c'est un temps d'écoute, dans un cadre doux où tu peux enfin lâcher prise.</p>
       <div class="about__facts">
         <div class="fact">
           <span class="fact__value">[3] ans</span>
@@ -331,35 +314,34 @@
 <!-- 7. AVIS -->
 <section class="reviews" aria-labelledby="reviews-title">
   <div class="reviews__inner container">
-    <h2 id="reviews-title" class="eyebrow reviews__eyebrow">Elles ont pris ce temps pour elles</h2>
+    <div class="reviews__head">
+      <svg class="ornament" viewBox="0 0 40 14" aria-hidden="true"><path d="M2 7h12M26 7h12"/><path d="M20 2c-2 3-2 7 0 10c2-3 2-7 0-10z"/></svg>
+      <h2 id="reviews-title" class="eyebrow reviews__eyebrow">Elles ont pris ce temps pour elles</h2>
+    </div>
 
     <div class="reviews__slides" aria-live="polite">
-      <!-- Un bloc <figure> par avis. Les 3 sont des emplacements à remplacer par de vrais avis. -->
+      <!-- Un bloc <figure> par avis. Ordre : résultat concret, confiance, résultat visage. -->
       <figure class="review" id="avis-1">
         <span class="review__mark" aria-hidden="true">“</span>
-        <span class="placeholder__tag">[PLACEHOLDER — AVIS RÉEL À INSÉRER]</span>
-        <blockquote class="review__quote">Une phrase forte d'une cliente, sur son ressenti et sur l'accueil.</blockquote>
+        <blockquote class="review__quote">Depuis le massage liftant japonais, ma peau est beaucoup plus lumineuse. Le matin au réveil, mes traits sont moins froissés et je n'ai presque plus de poches sous les yeux.</blockquote>
         <figcaption class="review__caption">
-          <span class="review__name">[Prénom], [âge]</span>
-          <span class="review__meta">[Soin reçu] · [Mois et année]</span>
+          <span class="review__name">Vanessa</span>
+          <span class="review__meta">Massage liftant japonais</span>
         </figcaption>
       </figure>
       <figure class="review" id="avis-2" hidden>
         <span class="review__mark" aria-hidden="true">“</span>
-        <span class="placeholder__tag">[PLACEHOLDER — AVIS RÉEL À INSÉRER]</span>
-        <blockquote class="review__quote">Une phrase forte d'une cliente, sur son ressenti et sur l'accueil.</blockquote>
+        <blockquote class="review__quote">Violette est pro, douce et bienveillante. Un bonheur de prendre du temps pour soi&nbsp;: je la recommande à 100&nbsp;%.</blockquote>
         <figcaption class="review__caption">
-          <span class="review__name">[Prénom], [âge]</span>
-          <span class="review__meta">[Soin reçu] · [Mois et année]</span>
+          <span class="review__name">Isabelle</span>
         </figcaption>
       </figure>
       <figure class="review" id="avis-3" hidden>
         <span class="review__mark" aria-hidden="true">“</span>
-        <span class="placeholder__tag">[PLACEHOLDER — AVIS RÉEL À INSÉRER]</span>
-        <blockquote class="review__quote">Une phrase forte d'une cliente, sur son ressenti et sur l'accueil.</blockquote>
+        <blockquote class="review__quote">Ma peau est vraiment plus lumineuse et beaucoup moins fatiguée. Depuis ma première séance, je ne mets même plus d'anti-cernes&nbsp;!</blockquote>
         <figcaption class="review__caption">
-          <span class="review__name">[Prénom], [âge]</span>
-          <span class="review__meta">[Soin reçu] · [Mois et année]</span>
+          <span class="review__name">Claire</span>
+          <span class="review__meta">Soin visage</span>
         </figcaption>
       </figure>
     </div>
@@ -369,7 +351,6 @@
       <button type="button" class="dot" aria-controls="avis-2"><span class="sr-only">Avis 2</span></button>
       <button type="button" class="dot" aria-controls="avis-3"><span class="sr-only">Avis 3</span></button>
     </div>
-    <p class="reviews__source">[Source des avis à préciser]</p>
     <a href="#reserver" class="btn btn--lg" data-book>Réserver à mon tour</a>
   </div>
 </section>
@@ -393,11 +374,11 @@
       </details>
       <details class="faq__item">
         <summary><span class="faq__q">Y a-t-il des contre-indications&nbsp;?</span><svg class="faq__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-        <p class="faq__a">Si tu es enceinte, si tu as un problème de santé ou un traitement en cours, parles-en-moi avant de réserver. On verra ensemble si le soin est adapté. [Liste précise à confirmer]</p>
+        <p class="faq__a">Contre-indications&nbsp;: fièvre, insuffisance rénale, hyperthyroïdie, hypotension, asthme non traité, phlébites, thromboses, problèmes cardio-vasculaires, grossesse de moins de 3&nbsp;mois. En cas de doute, parles-en-moi avant de réserver.</p>
       </details>
       <details class="faq__item">
         <summary><span class="faq__q">Une séance suffit-elle, ou vaut-il mieux faire une cure&nbsp;?</span><svg class="faq__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-        <p class="faq__a">Une seule séance fait déjà beaucoup de bien. Si tu veux en profiter plus durablement, la cure de 5 séances permet d'installer une régularité, à un tarif plus doux. [Rythme conseillé entre les séances à préciser]</p>
+        <p class="faq__a">Une séance fait déjà beaucoup de bien, mais c'est la régularité qui change tout&nbsp;: en cure de 5&nbsp;séances, ton corps prend le pli, la sensation de légèreté s'installe et dure bien plus longtemps. C'est aussi la formule la plus avantageuse, jusqu'à 50&nbsp;€ d'économie (70&nbsp;€ la séance de drainage corps entier au lieu de 80&nbsp;€). C'est celle que je te conseille si tu veux vraiment sentir la différence. <a href="#soins-drainage" class="text-link">Voir les cures&nbsp;↑</a></p>
       </details>
       <details class="faq__item">
         <summary><span class="faq__q">Comment annuler ou déplacer mon rendez-vous&nbsp;?</span><svg class="faq__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
@@ -417,11 +398,11 @@
       </details>
       <details class="faq__item">
         <summary><span class="faq__q">Où se trouve le cabinet&nbsp;? Peut-on se garer&nbsp;?</span><svg class="faq__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-        <p class="faq__a">Le cabinet se trouve [adresse], à [Ville]. [Infos stationnement à préciser].</p>
+        <p class="faq__a">Le cabinet se trouve 18 chemin des Coulons, au sein du vaste domaine bucolique du Septentrion, à Marcq-en-Barœul. Un parking gratuit est disponible sur place, au Septentrion.</p>
       </details>
       <details class="faq__item">
         <summary><span class="faq__q">Proposes-tu des cartes cadeaux&nbsp;?</span><svg class="faq__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-        <p class="faq__a">[Réponse à fournir]</p>
+        <p class="faq__a">Oui, des cartes cadeaux sont disponibles. Pour en commander une, écris-moi directement par e-mail&nbsp;: <a href="mailto:thomasseviolette@gmail.com" class="text-link">thomasseviolette@gmail.com</a>.</p>
       </details>
     </div>
   </div>
@@ -473,9 +454,9 @@
       </div>
       <div class="site-footer__col">
         <h2 class="site-footer__heading">Me trouver</h2>
-        <span>[Adresse]</span>
-        <span>[Code postal, Ville]</span>
-        <a href="#" class="site-footer__link">Itinéraire&nbsp;→</a>
+        <span>18 chemin des Coulons</span>
+        <span>59700 Marcq-en-Barœul</span>
+        <a href="https://www.google.com/maps/search/?api=1&amp;query=18+chemin+des+Coulons+59700+Marcq-en-Bar%C5%93ul" class="site-footer__link" target="_blank" rel="noopener">Itinéraire&nbsp;→</a>
       </div>
       <div class="site-footer__col">
         <h2 class="site-footer__heading">Horaires</h2>
@@ -484,9 +465,9 @@
       </div>
       <div class="site-footer__col">
         <h2 class="site-footer__heading">Contact</h2>
-        <span>[Téléphone]</span>
-        <span>[E-mail]</span>
-        <span>[Instagram]</span>
+        <a href="tel:+33644928786" class="site-footer__link">06&nbsp;44&nbsp;92&nbsp;87&nbsp;86</a>
+        <a href="mailto:thomasseviolette@gmail.com" class="site-footer__link">thomasseviolette@gmail.com</a>
+        <a href="https://www.instagram.com/violetteholisticmassage/" class="site-footer__link" target="_blank" rel="noopener">@violetteholisticmassage</a>
       </div>
     </div>
     <div class="site-footer__bottom">

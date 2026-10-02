@@ -8,6 +8,27 @@
   var hasObserver = 'IntersectionObserver' in window;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  /* ---------- Défilement fluide (Lenis) ----------
+     Uniquement à la molette et au pavé tactile : sur écran tactile, le
+     défilement natif du téléphone est conservé. Entièrement désactivé avec
+     le réglage « réduire les animations », même s'il change en cours de
+     visite. Les liens d'ancre restent gérés par le navigateur (focus,
+     adresse de la page). */
+  var lenis = null;
+
+  function updateSmoothScroll() {
+    if (!window.Lenis) return;
+    if (reduceMotion.matches && lenis) {
+      lenis.destroy();
+      lenis = null;
+    } else if (!reduceMotion.matches && !lenis) {
+      lenis = new window.Lenis({ lerp: 0.135, autoRaf: true });
+    }
+  }
+
+  updateSmoothScroll();
+  if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', updateSmoothScroll);
+
   /* ---------- Apparitions au défilement (brief, animations 4, 5, 7, 8) ----------
      Un bloc [data-reveal] reçoit .is-visible la première fois qu'il est
      visible à 15 %, puis reste en place. Le CSS décrit l'animation. */
@@ -116,45 +137,76 @@
     });
   }
 
-  dots.forEach(function (dot, index) {
-    dot.addEventListener('click', function () {
-      var next = slides[index];
-      var current = slides.filter(function (slide) {
-        return !slide.hidden && !slide.classList.contains('is-leaving');
-      })[0];
-      if (next === current) return;
+  function currentIndex() {
+    for (var i = 0; i < slides.length; i++) {
+      if (!slides[i].hidden && !slides[i].classList.contains('is-leaving')) return i;
+    }
+    return 0;
+  }
 
-      clearTimeout(fadeTimer);
-      cleanSlides();
+  function showSlide(index) {
+    var dot = dots[index];
+    var next = slides[index];
+    var current = slides[currentIndex()];
+    if (next === current) return;
 
-      dots.forEach(function (other) {
-        if (other === dot) {
-          other.setAttribute('aria-current', 'true');
-        } else {
-          other.removeAttribute('aria-current');
-        }
-      });
+    clearTimeout(fadeTimer);
+    cleanSlides();
 
-      slides.forEach(function (slide) {
-        if (slide !== next && slide !== current) slide.hidden = true;
-      });
-      next.hidden = false;
-
-      if (reduceMotion.matches || !current) {
-        if (current) current.hidden = true;
-        return;
+    dots.forEach(function (other) {
+      if (other === dot) {
+        other.setAttribute('aria-current', 'true');
+      } else {
+        other.removeAttribute('aria-current');
       }
-
-      /* L'ancien avis s'efface pendant que le nouveau apparaît */
-      current.classList.add('is-leaving');
-      current.setAttribute('aria-hidden', 'true');
-      next.classList.add('is-entering');
-      fadeTimer = setTimeout(function () {
-        current.hidden = true;
-        cleanSlides();
-      }, 600);
     });
+
+    slides.forEach(function (slide) {
+      if (slide !== next && slide !== current) slide.hidden = true;
+    });
+    next.hidden = false;
+
+    if (reduceMotion.matches || !current) {
+      if (current) current.hidden = true;
+      return;
+    }
+
+    /* L'ancien avis s'efface pendant que le nouveau apparaît */
+    current.classList.add('is-leaving');
+    current.setAttribute('aria-hidden', 'true');
+    next.classList.add('is-entering');
+    fadeTimer = setTimeout(function () {
+      current.hidden = true;
+      cleanSlides();
+    }, 600);
+  }
+
+  dots.forEach(function (dot, index) {
+    dot.addEventListener('click', function () { showSlide(index); });
   });
+
+  /* Balayage au doigt : vers la gauche pour l'avis suivant, vers la droite
+     pour le précédent (en boucle). Le défilement vertical reste natif. */
+  var slidesBox = document.querySelector('.reviews__slides');
+  var swipeX = null;
+  var swipeY = null;
+
+  if (slidesBox && slides.length > 1) {
+    slidesBox.addEventListener('touchstart', function (event) {
+      swipeX = event.touches[0].clientX;
+      swipeY = event.touches[0].clientY;
+    }, { passive: true });
+
+    slidesBox.addEventListener('touchend', function (event) {
+      if (swipeX === null) return;
+      var dx = event.changedTouches[0].clientX - swipeX;
+      var dy = event.changedTouches[0].clientY - swipeY;
+      swipeX = null;
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      var step = dx < 0 ? 1 : -1;
+      showSlide((currentIndex() + step + slides.length) % slides.length);
+    }, { passive: true });
+  }
 
   /* ---------- FAQ : ouverture et fermeture avec une hauteur fluide ----------
      Le <details> natif reste la base (clavier, lecteurs d'écran, recherche
