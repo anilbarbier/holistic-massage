@@ -1,0 +1,5 @@
+# Remplacer DOMAINE-A-DEFINIR par le nom de domaine du site
+User-agent: *
+Allow: /
+
+Sitemap: https://DOMAINE-A-DEFINIR/sitemap.xml

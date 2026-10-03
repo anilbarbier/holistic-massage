@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Remplacer DOMAINE-A-DEFINIR par le nom de domaine du site -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://DOMAINE-A-DEFINIR/</loc></url>
+  <url><loc>https://DOMAINE-A-DEFINIR/mentions-legales.html</loc></url>
+  <url><loc>https://DOMAINE-A-DEFINIR/politique-de-confidentialite.html</loc></url>
+</urlset>

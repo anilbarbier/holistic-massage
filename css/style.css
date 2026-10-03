@@ -1054,10 +1054,37 @@ em { font-style: italic; }
 }
 .reviews__head .ornament { width: 56px; height: 20px; }
 .reviews__eyebrow { text-align: center; }
-.reviews__slides {
-  width: 100%;
-  max-width: 980px;
+/* Le fil d'avis : la piste glisse dans une fenêtre dont les bords
+   s'effacent, l'avis du centre est net et ses voisins en transparence */
+.reviews__carousel { width: 100%; }
+.reviews__carousel:focus-visible { outline-offset: 8px; border-radius: 16px; }
+.reviews__viewport {
+  overflow: hidden;
+  overscroll-behavior-x: contain;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
 }
+.reviews__viewport.is-dragging { cursor: grabbing; }
+.reviews__track {
+  display: flex;
+  align-items: center;
+  gap: 56px;
+  will-change: transform;
+  transition: transform 0.7s var(--ease-doux);
+}
+.reviews__track.is-dragging { transition: none; }
+.reviews__track .review {
+  flex: 0 0 min(760px, 78%);
+  opacity: 0.22;
+  transform: scale(0.93);
+  transition: opacity 0.7s var(--ease-doux), transform 0.7s var(--ease-doux);
+}
+.reviews__track .review.is-active { opacity: 1; transform: none; }
+.reviews__track .review:not(.is-active) { cursor: pointer; }
 /* Style éditorial : pas de cadre, la citation seule, un grand guillemet
    prune en filigrane derrière le texte */
 .review {
@@ -1066,18 +1093,17 @@ em { font-style: italic; }
   flex-direction: column;
   align-items: center;
   gap: 32px;
-  padding: 24px 40px 0;
+  padding: 24px 0 0;
   text-align: center;
 }
-.review[hidden] { display: none; }
 .review__mark {
   position: absolute;
-  top: -40px;
+  top: -30px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-titre);
   font-variation-settings: 'SOFT' 100;
-  font-size: 320px;
+  font-size: 260px;
   line-height: 1;
   color: var(--prune);
   opacity: 0.1;
@@ -1089,7 +1115,7 @@ em { font-style: italic; }
   font-variation-settings: 'SOFT' 100;
   font-style: italic;
   font-weight: 300;
-  font-size: 46px;
+  font-size: 40px;
   line-height: 1.25;
   letter-spacing: -0.01em;
   color: var(--foret);
@@ -1143,10 +1169,12 @@ em { font-style: italic; }
   height: 10px;
   border-radius: 50%;
   border: 1.5px solid var(--taupe);
+  transition: background-color 0.4s ease, border-color 0.4s ease, transform 0.4s var(--ease-doux);
 }
 .dot[aria-current="true"]::before {
   border-color: var(--prune);
   background: var(--prune);
+  transform: scale(1.15);
 }
 .dot:focus-visible { border-radius: 50%; }
 
@@ -1613,7 +1641,13 @@ em { font-style: italic; }
   /* Avis */
   .reviews__inner { gap: 40px; }
   .review { gap: 24px; padding: 16px 0 0; }
-  .review__mark { top: -20px; font-size: 220px; }
+  .review__mark { top: -20px; font-size: 200px; }
+  /* Fil d'avis : le voisin dépasse jusqu'au bord de l'écran,
+     coupé par la section pour ne pas élargir la page */
+  .reviews { overflow: hidden; }
+  .reviews__viewport { overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .reviews__track { gap: 16px; }
+  .reviews__track .review { flex-basis: 82%; }
   .review__quote { font-size: 28px; }
   .review__caption { flex-direction: column; align-items: center; gap: 6px; }
   .review__caption::before { margin-bottom: 6px; }
@@ -1772,9 +1806,6 @@ em { font-style: italic; }
     transition-delay: calc(var(--i, 0) * 0.12s + 0.6s + var(--j, 0) * 0.4s);
   }
 
-  /* 9. Avis : fondu enchaîné d'un avis à l'autre (classes posées par main.js) */
-  .review.is-entering { animation: fondu-entree 0.6s ease both; }
-  .review.is-leaving { animation: fondu-sortie 0.6s ease both; pointer-events: none; }
 
   /* Test « mixed media » (section 15 ter) : cadre esquissé, puis feuillage,
      une seule fois, après l'apparition de la photo */
@@ -1911,13 +1942,6 @@ em { font-style: italic; }
   .soins__photo.mixed .mixed__sprig { right: -2px; bottom: 24px; width: 56px; height: 76px; }
 }
 
-/* Avis superposés pour pouvoir passer de l'un à l'autre en fondu.
-   Les avis masqués gardent leur place (invisibles) : la zone prend la
-   hauteur du plus long, et les points comme le bouton ne bougent plus. */
-.reviews__slides { display: grid; touch-action: pan-y; }
-.review { grid-area: 1 / 1; justify-content: center; }
-.reviews__slides .review[hidden] { display: flex; visibility: hidden; }
-
 @keyframes monte-16 {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: none; }
@@ -1930,14 +1954,6 @@ em { font-style: italic; }
   0%, 100% { transform: scale(0.8); opacity: 0.55; }
   50%      { transform: scale(1.15); opacity: 1; }
 }
-@keyframes fondu-entree {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes fondu-sortie {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
 
 @media (max-width: 760px) {
   .respire__halo { width: 340px; height: 340px; margin: -170px 0 0 -170px; }
@@ -1948,7 +1964,10 @@ em { font-style: italic; }
   .mobile-cta,
   .soins__photo-alt,
   .faq__icon,
-  .site-header::after { transition: none; }
+  .site-header::after,
+  .reviews__track,
+  .reviews__track .review,
+  .dot::before { transition: none; }
   .js-trace .note-reco__circled svg { stroke-dashoffset: 0; transition: none; }
 }
 

@@ -8,6 +8,53 @@
   var hasObserver = 'IntersectionObserver' in window;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  /* ---------- Réservation : lien Calendly avec le soin déjà choisi ----------
+     Coller ici l'adresse de la page Calendly de Violette, par exemple
+     'https://calendly.com/violette-holistic/seance'. Tant qu'elle est vide,
+     les boutons « Réserver » mènent à la section réservation de la page.
+
+     Dans Calendly, la question « Quel soin souhaites-tu ? » doit être la
+     PREMIÈRE question du formulaire (c'est elle que remplit « a1 »), et ses
+     choix doivent porter exactement les noms indiqués dans data-soin
+     (« Drainage corps entier », « Massage liftant japonais »…).
+     Les paramètres utm_* permettent de voir dans Calendly depuis quel bouton
+     chaque rendez-vous a été pris. */
+  var CALENDLY_URL = '';
+
+  var bookLinks = document.querySelectorAll('[data-book]');
+
+  function bookingPlace(link) {
+    if (link.closest('.site-header')) return 'en-tete';
+    if (link.closest('[data-mobile-cta]')) return 'barre-mobile';
+    if (link.closest('.site-footer')) return 'pied-de-page';
+    var section = link.closest('section');
+    if (!section) return 'page';
+    return section.id || section.classList[0];
+  }
+
+  bookLinks.forEach(function (link) {
+    var place = bookingPlace(link);
+    var soin = link.getAttribute('data-soin');
+
+    if (CALENDLY_URL) {
+      var params = ['utm_source=site', 'utm_content=' + encodeURIComponent(place)];
+      if (soin) params.unshift('a1=' + encodeURIComponent(soin));
+      link.href = CALENDLY_URL + (CALENDLY_URL.indexOf('?') === -1 ? '?' : '&') + params.join('&');
+      link.target = '_blank';
+      link.rel = 'noopener';
+    }
+
+    /* Mesure d'audience (Plausible, sans cookie) : compte chaque clic sur
+       « Réserver », avec l'emplacement du bouton et le soin éventuel.
+       Ne fait rien tant que Plausible n'est pas activé dans le <head>. */
+    link.addEventListener('click', function () {
+      if (typeof window.plausible !== 'function') return;
+      var props = { emplacement: place };
+      if (soin) props.soin = soin;
+      window.plausible('Réserver', { props: props });
+    });
+  });
+
   /* ---------- Défilement fluide (Lenis) ----------
      Uniquement à la molette et au pavé tactile : sur écran tactile, le
      défilement natif du téléphone est conservé. Entièrement désactivé avec
@@ -123,89 +170,199 @@
     }).observe(hero);
   }
 
-  /* ---------- Avis : navigation par points, en fondu enchaîné ---------- */
-  var dots = document.querySelectorAll('.reviews__dots .dot');
-  var slides = Array.prototype.map.call(dots, function (dot) {
-    return document.getElementById(dot.getAttribute('aria-controls'));
-  });
-  var fadeTimer = null;
+  /* ---------- Avis : posés côte à côte, on les fait glisser ----------
+     L'avis du centre est net, ses voisins dépassent en transparence.
+     On passe de l'un à l'autre :
+     - en faisant glisser à la souris ou au doigt (l'avis suit le geste) ;
+     - en balayant le pavé tactile de l'ordinateur à deux doigts ;
+     - avec les points, ou les flèches ← → du clavier ;
+     - en cliquant sur un avis voisin.
+     Le fil ne boucle pas : il résiste un peu au premier et au dernier avis. */
+  var carousel = document.querySelector('.reviews__carousel');
 
-  function cleanSlides() {
-    slides.forEach(function (slide) {
-      slide.classList.remove('is-entering', 'is-leaving');
-      slide.removeAttribute('aria-hidden');
+  if (carousel) {
+    var viewport = carousel.querySelector('.reviews__viewport');
+    var track = carousel.querySelector('.reviews__track');
+    var slides = track.querySelectorAll('.review');
+    var dots = document.querySelectorAll('.reviews__dots .dot');
+    var slideCount = slides.length;
+    var current = 0;
+
+    var slideOffset = function (dx) {
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      var width = slides[0].offsetWidth;
+      return (viewport.clientWidth - width) / 2 - current * (width + gap) + (dx || 0);
+    };
+    var renderTrack = function (dx) {
+      track.style.transform = 'translate3d(' + slideOffset(dx) + 'px, 0, 0)';
+    };
+    /* Résistance élastique quand on tire au-delà du premier ou du dernier avis */
+    var resist = function (dx) {
+      return (current === 0 && dx > 0) || (current === slideCount - 1 && dx < 0) ? dx * 0.3 : dx;
+    };
+    var goTo = function (index) {
+      current = Math.max(0, Math.min(slideCount - 1, index));
+      slides.forEach(function (slide, n) {
+        slide.classList.toggle('is-active', n === current);
+        slide.setAttribute('aria-hidden', n === current ? 'false' : 'true');
+      });
+      dots.forEach(function (dot, n) {
+        if (n === current) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
+      renderTrack(0);
+    };
+    /* Placement sans animation (arrivée sur la page, changement de taille) */
+    var placeInstantly = function () {
+      track.classList.add('is-dragging');
+      renderTrack(0);
+      void track.offsetWidth;
+      track.classList.remove('is-dragging');
+    };
+
+    dots.forEach(function (dot, n) {
+      dot.addEventListener('click', function () { goTo(n); });
     });
-  }
 
-  function currentIndex() {
-    for (var i = 0; i < slides.length; i++) {
-      if (!slides[i].hidden && !slides[i].classList.contains('is-leaving')) return i;
-    }
-    return 0;
-  }
+    carousel.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowLeft') { event.preventDefault(); goTo(current - 1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); goTo(current + 1); }
+    });
 
-  function showSlide(index) {
-    var dot = dots[index];
-    var next = slides[index];
-    var current = slides[currentIndex()];
-    if (next === current) return;
+    /* Glisser à la souris ou au doigt (Pointer Events). Le geste ne compte
+       que s'il est surtout horizontal : la page défile toujours normalement
+       quand on glisse vers le haut ou le bas. */
+    var pointerId = null, startX = 0, startY = 0, startTime = 0;
+    var pressing = false, dragging = false, justDragged = false;
 
-    clearTimeout(fadeTimer);
-    cleanSlides();
+    viewport.addEventListener('pointerdown', function (event) {
+      if (event.button !== 0) return;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startY = event.clientY;
+      startTime = Date.now();
+      pressing = true;
+      dragging = false;
+    });
 
-    dots.forEach(function (other) {
-      if (other === dot) {
-        other.setAttribute('aria-current', 'true');
-      } else {
-        other.removeAttribute('aria-current');
+    viewport.addEventListener('pointermove', function (event) {
+      if (!pressing || event.pointerId !== pointerId) return;
+      var dx = event.clientX - startX;
+      var dy = event.clientY - startY;
+      if (!dragging) {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+        if (Math.abs(dy) > Math.abs(dx)) { pressing = false; return; }
+        dragging = true;
+        viewport.setPointerCapture(pointerId);
+        viewport.classList.add('is-dragging');
+        track.classList.add('is-dragging');
+      }
+      renderTrack(resist(dx));
+    });
+
+    var endDrag = function (event, cancelled) {
+      if (!pressing || event.pointerId !== pointerId) return;
+      pressing = false;
+      if (!dragging) return;
+      dragging = false;
+      justDragged = true;
+      viewport.classList.remove('is-dragging');
+      track.classList.remove('is-dragging');
+      var dx = cancelled ? 0 : event.clientX - startX;
+      var speed = dx / Math.max(1, Date.now() - startTime);
+      /* Assez loin, ou lancé assez vite : on change d'avis */
+      if (dx < -70 || (speed < -0.45 && dx < -20)) goTo(current + 1);
+      else if (dx > 70 || (speed > 0.45 && dx > 20)) goTo(current - 1);
+      else goTo(current);
+    };
+    viewport.addEventListener('pointerup', function (event) { endDrag(event, false); });
+    viewport.addEventListener('pointercancel', function (event) { endDrag(event, true); });
+    viewport.addEventListener('dragstart', function (event) { event.preventDefault(); });
+
+    /* Un clic sur un avis voisin l'amène au centre (sauf juste après un glissement) */
+    track.addEventListener('click', function (event) {
+      if (justDragged) { justDragged = false; return; }
+      var slide = event.target.closest('.review');
+      if (slide && !slide.classList.contains('is-active')) {
+        goTo(Array.prototype.indexOf.call(slides, slide));
       }
     });
 
-    slides.forEach(function (slide) {
-      if (slide !== next && slide !== current) slide.hidden = true;
-    });
-    next.hidden = false;
+    /* Pavé tactile : balayage horizontal à deux doigts. L'avis suit les
+       doigts ; passé un seuil, on change d'avis une seule fois par geste.
 
-    if (reduceMotion.matches || !current) {
-      if (current) current.hidden = true;
-      return;
-    }
+       Après un balayage, le Mac continue d'envoyer des événements de plus
+       en plus faibles pendant 1 à 2 s (l'élan). Ils doivent être ignorés,
+       sinon un geste ferait défiler plusieurs avis. Mais on ne peut pas
+       attendre la fin de l'élan pour accepter le geste suivant : si on
+       rebalaie pendant l'élan, le flux d'événements ne s'arrête jamais.
+       On reconnaît donc un nouveau geste à sa forme :
+       - l'élan ne fait que ralentir et ne change jamais de sens ;
+       - un nouveau balayage accélère (au moins deux événements de suite
+         nettement plus forts que l'élan), ou part dans l'autre sens.
+       Un silence de 180 ms termine aussi le geste en cours. */
+    var WHEEL_STEP = 90;          /* distance à parcourir pour changer d'avis */
+    var wheelDistance = 0;
+    var wheelLocked = false;      /* avis changé : on ignore l'élan */
+    var wheelLockTime = 0;
+    var wheelLockSign = 0;
+    var wheelRecent = [];         /* intensités récentes de l'élan */
+    var wheelRises = 0;
+    var wheelTimer = null;
 
-    /* L'ancien avis s'efface pendant que le nouveau apparaît */
-    current.classList.add('is-leaving');
-    current.setAttribute('aria-hidden', 'true');
-    next.classList.add('is-entering');
-    fadeTimer = setTimeout(function () {
-      current.hidden = true;
-      cleanSlides();
-    }, 600);
-  }
+    var wheelUnlock = function () {
+      wheelLocked = false;
+      wheelDistance = 0;
+      wheelRecent = [];
+      wheelRises = 0;
+    };
 
-  dots.forEach(function (dot, index) {
-    dot.addEventListener('click', function () { showSlide(index); });
-  });
+    /* Pendant l'élan : ce nouvel événement commence-t-il un autre geste ? */
+    var isNewGesture = function (strength, sign) {
+      if (sign !== wheelLockSign && strength >= 4) return true;
+      var settled = Date.now() - wheelLockTime > 250 && wheelRecent.length >= 3;
+      var floor = Math.min.apply(null, wheelRecent.length ? wheelRecent : [strength]);
+      wheelRises = settled && strength > floor * 1.5 + 2 ? wheelRises + 1 : 0;
+      wheelRecent.push(strength);
+      if (wheelRecent.length > 5) wheelRecent.shift();
+      return wheelRises >= 2;
+    };
 
-  /* Balayage au doigt : vers la gauche pour l'avis suivant, vers la droite
-     pour le précédent (en boucle). Le défilement vertical reste natif. */
-  var slidesBox = document.querySelector('.reviews__slides');
-  var swipeX = null;
-  var swipeY = null;
+    viewport.addEventListener('wheel', function (event) {
+      if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+      event.preventDefault();
+      var delta = event.deltaMode === 1 ? event.deltaX * 16 : event.deltaX;
 
-  if (slidesBox && slides.length > 1) {
-    slidesBox.addEventListener('touchstart', function (event) {
-      swipeX = event.touches[0].clientX;
-      swipeY = event.touches[0].clientY;
-    }, { passive: true });
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(function () {
+        if (!wheelLocked) {
+          track.classList.remove('is-dragging');
+          goTo(current);
+        }
+        wheelUnlock();
+      }, 180);
 
-    slidesBox.addEventListener('touchend', function (event) {
-      if (swipeX === null) return;
-      var dx = event.changedTouches[0].clientX - swipeX;
-      var dy = event.changedTouches[0].clientY - swipeY;
-      swipeX = null;
-      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-      var step = dx < 0 ? 1 : -1;
-      showSlide((currentIndex() + step + slides.length) % slides.length);
-    }, { passive: true });
+      if (wheelLocked) {
+        if (!isNewGesture(Math.abs(delta), delta > 0 ? 1 : -1)) return;
+        wheelUnlock();
+      }
+
+      wheelDistance -= delta;
+      if (Math.abs(wheelDistance) > WHEEL_STEP) {
+        wheelLocked = true;
+        wheelLockTime = Date.now();
+        wheelLockSign = delta > 0 ? 1 : -1;
+        track.classList.remove('is-dragging');
+        goTo(current + (wheelDistance < 0 ? 1 : -1));
+        return;
+      }
+      track.classList.add('is-dragging');
+      renderTrack(resist(wheelDistance));
+    }, { passive: false });
+
+    window.addEventListener('resize', placeInstantly);
+    goTo(0);
+    placeInstantly();
   }
 
   /* ---------- FAQ : ouverture et fermeture avec une hauteur fluide ----------
