@@ -1892,10 +1892,10 @@ em { font-style: italic; }
 }
 .soins__photo.mixed .mixed__sprig {
   right: -42px;
-  top: 64px;
+  bottom: 64px;
   width: 74px;
   height: 100px;
-  rotate: 162deg;
+  rotate: 18deg;
 }
 
 @media (max-width: 1160px) {
@@ -1908,7 +1908,7 @@ em { font-style: italic; }
   .about__photos.mixed::after { right: 36px; bottom: 36px; }
   .about__photos.mixed .mixed__frame { width: calc(100% - 36px); height: calc(100% - 36px); }
   .about__photos.mixed .mixed__sprig { left: -14px; bottom: 60px; width: 56px; height: 76px; }
-  .soins__photo.mixed .mixed__sprig { right: -2px; top: -30px; width: 56px; height: 76px; }
+  .soins__photo.mixed .mixed__sprig { right: -2px; bottom: 24px; width: 56px; height: 76px; }
 }
 
 /* Avis superposés pour pouvoir passer de l'un à l'autre en fondu.
