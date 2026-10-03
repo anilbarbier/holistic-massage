@@ -526,8 +526,9 @@
   });
 
   /* ---------- Barre « Réserver » sur téléphone ----------
-     Masquée tant qu'un autre bouton de réservation bien visible est à l'écran
-     (carte du hero, section réservation, pied de page), pour ne pas doubler. */
+     Masquée tant qu'un autre bouton de réservation est à l'écran (carte du
+     hero, boutons des soins, des étapes, des avis, section réservation, pied
+     de page), pour ne jamais afficher deux boutons « Réserver » à la fois. */
   var mobileCta = document.querySelector('[data-mobile-cta]');
 
   if (mobileCta && hasObserver) {
@@ -543,9 +544,8 @@
       mobileCta.classList.toggle('is-hidden', visibleZones.size > 0);
     });
 
-    ['.hero__card .btn', '#reserver', '.site-footer'].forEach(function (selector) {
-      var zone = document.querySelector(selector);
-      if (zone) observer.observe(zone);
+    document.querySelectorAll('.btn[data-book], #reserver, .site-footer').forEach(function (zone) {
+      if (!zone.closest('[data-mobile-cta]') && !zone.closest('.site-header')) observer.observe(zone);
     });
   }
 

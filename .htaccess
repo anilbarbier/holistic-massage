@@ -1,0 +1,5 @@
+# Hébergeur classique (Apache : OVH, o2switch, Hostinger…) :
+# toute adresse inconnue affiche la page 404 du site.
+# Sans effet sur GitHub Pages, Netlify, Vercel ou Cloudflare Pages,
+# qui utilisent 404.html automatiquement.
+ErrorDocument 404 /404.html
