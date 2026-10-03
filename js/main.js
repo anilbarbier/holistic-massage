@@ -83,8 +83,7 @@
      - Il est plus haut que l'écran : son début arrive en haut de l'espace
        visible, avec un peu d'air, pour ne pas couper son titre.
      Une cible peut désigner le bloc à cadrer avec data-scroll-focus
-     (par exemple le contenu d'une section), et demander à être mise en
-     lumière à l'arrivée avec data-spotlight. */
+     (par exemple le contenu d'une section). */
   var siteHeader = document.querySelector('.site-header');
   var bookingBar = document.querySelector('[data-mobile-cta]');
   var SCROLL_AIR = 24;
@@ -123,28 +122,18 @@
     return Math.max(0, Math.min(max, Math.round(y)));
   }
 
-  function spotlight(target) {
-    var spot = target.hasAttribute('data-spotlight') ? target : null;
-    if (!spot) return;
-    spot.classList.remove('is-spotlit');
-    void spot.offsetWidth;
-    spot.classList.add('is-spotlit');
-  }
-
   function scrollToTarget(target, instant) {
     var corrected = false;
 
     /* Pendant le trajet, des photos encore non chargées peuvent s'afficher
        et décaler légèrement la page : à l'arrivée, on remesure et on
-       ajuste une fois si besoin, avant la mise en lumière éventuelle. */
+       ajuste une fois si besoin. */
     var arrived = function () {
       var y = scrollPositionFor(target);
       if (!corrected && Math.abs(window.scrollY - y) > 2) {
         corrected = true;
         go(y);
-        return;
       }
-      spotlight(target);
     };
 
     var go = function (y) {
