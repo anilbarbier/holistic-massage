@@ -59,8 +59,7 @@
      Uniquement à la molette et au pavé tactile : sur écran tactile, le
      défilement natif du téléphone est conservé. Entièrement désactivé avec
      le réglage « réduire les animations », même s'il change en cours de
-     visite. Les liens d'ancre restent gérés par le navigateur (focus,
-     adresse de la page). */
+     visite. Les liens d'ancre sont gérés juste en dessous. */
   var lenis = null;
 
   function updateSmoothScroll() {
@@ -75,6 +74,128 @@
 
   updateSmoothScroll();
   if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', updateSmoothScroll);
+
+  /* ---------- Liens internes : arriver au milieu de ce qu'on vise ----------
+     On mesure le contenu visé (sans les marges intérieures de sa section)
+     et l'espace réellement visible : sous l'en-tête collant (ordinateur),
+     au-dessus de la barre « Réserver » (téléphone).
+     - Le contenu tient dans cet espace : il arrive centré.
+     - Il est plus haut que l'écran : son début arrive en haut de l'espace
+       visible, avec un peu d'air, pour ne pas couper son titre.
+     Une cible peut désigner le bloc à cadrer avec data-scroll-focus
+     (par exemple le contenu d'une section), et demander à être mise en
+     lumière à l'arrivée avec data-spotlight. */
+  var siteHeader = document.querySelector('.site-header');
+  var bookingBar = document.querySelector('[data-mobile-cta]');
+  var SCROLL_AIR = 24;
+
+  function visibleArea(target) {
+    var top = 0;
+    if (siteHeader && getComputedStyle(siteHeader).position !== 'relative') {
+      top = siteHeader.offsetHeight;
+    }
+    var bottom = window.innerHeight;
+    /* La barre du bas se masque d'elle-même sur la réservation et le pied de page */
+    var barHides = target.closest('#reserver, .site-footer');
+    if (bookingBar && !barHides && getComputedStyle(bookingBar).display !== 'none') {
+      bottom -= bookingBar.offsetHeight;
+    }
+    return { top: top, height: bottom - top };
+  }
+
+  function contentBox(el) {
+    var rect = el.getBoundingClientRect();
+    var style = getComputedStyle(el);
+    var padTop = parseFloat(style.paddingTop) || 0;
+    var padBottom = parseFloat(style.paddingBottom) || 0;
+    return { top: rect.top + padTop, height: rect.height - padTop - padBottom };
+  }
+
+  function scrollPositionFor(target) {
+    var focusSelector = target.getAttribute('data-scroll-focus');
+    var box = contentBox((focusSelector && target.querySelector(focusSelector)) || target);
+    var area = visibleArea(target);
+    var offset = box.height <= area.height - 2 * SCROLL_AIR
+      ? (area.height - box.height) / 2
+      : SCROLL_AIR;
+    var y = window.scrollY + box.top - area.top - offset;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    return Math.max(0, Math.min(max, Math.round(y)));
+  }
+
+  function spotlight(target) {
+    var spot = target.hasAttribute('data-spotlight') ? target : null;
+    if (!spot) return;
+    spot.classList.remove('is-spotlit');
+    void spot.offsetWidth;
+    spot.classList.add('is-spotlit');
+  }
+
+  function scrollToTarget(target, instant) {
+    var corrected = false;
+
+    /* Pendant le trajet, des photos encore non chargées peuvent s'afficher
+       et décaler légèrement la page : à l'arrivée, on remesure et on
+       ajuste une fois si besoin, avant la mise en lumière éventuelle. */
+    var arrived = function () {
+      var y = scrollPositionFor(target);
+      if (!corrected && Math.abs(window.scrollY - y) > 2) {
+        corrected = true;
+        go(y);
+        return;
+      }
+      spotlight(target);
+    };
+
+    var go = function (y) {
+      if (lenis && !instant) {
+        lenis.scrollTo(y, { onComplete: arrived });
+        return;
+      }
+      var smooth = !instant && !reduceMotion.matches;
+      window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'auto' });
+      if (!smooth || Math.abs(window.scrollY - y) < 2) {
+        arrived();
+      } else if ('onscrollend' in window) {
+        window.addEventListener('scrollend', arrived, { once: true });
+      } else {
+        setTimeout(arrived, 900);
+      }
+    };
+
+    go(scrollPositionFor(target));
+
+    /* Comme un lien d'ancre classique : le clavier repart de la cible */
+    if (!target.hasAttribute('tabindex') && !/^(A|BUTTON|INPUT|SELECT|TEXTAREA)$/.test(target.tagName)) {
+      target.setAttribute('tabindex', '-1');
+    }
+    target.focus({ preventScroll: true });
+  }
+
+  document.addEventListener('click', function (event) {
+    if (event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    var link = event.target.closest('a[href^="#"]');
+    if (!link) return;
+    var id = link.getAttribute('href').slice(1);
+    var target = id ? document.getElementById(id) : null;
+    if (!target) return;
+
+    event.preventDefault();
+    if (id === 'top') {
+      if (lenis) lenis.scrollTo(0); else window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    } else {
+      scrollToTarget(target, false);
+    }
+    if (history.pushState) history.pushState(null, '', '#' + id);
+  });
+
+  /* Arrivée sur la page avec une ancre (lien partagé, e-mail…) : même cadrage */
+  window.addEventListener('load', function () {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var target = id && id !== 'top' ? document.getElementById(id) : null;
+    if (target) scrollToTarget(target, true);
+  });
 
   /* ---------- Apparitions au défilement (brief, animations 4, 5, 7, 8) ----------
      Un bloc [data-reveal] reçoit .is-visible la première fois qu'il est

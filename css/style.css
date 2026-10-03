@@ -135,6 +135,10 @@ em { font-style: italic; }
   border-radius: 4px;
 }
 
+/* Cibles des liens internes (focus posé par main.js pour la navigation
+   au clavier) : pas de contour autour d'une section entière */
+[tabindex="-1"]:focus { outline: none; }
+
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
@@ -807,6 +811,22 @@ em { font-style: italic; }
   border-radius: var(--rayon-papier);
 }
 .cures .menu-line { --menu-fond: var(--creme); }
+
+/* Mise en lumière à l'arrivée par le lien « Voir les cures » (FAQ) :
+   un filet Prune entoure le bloc puis s'efface doucement.
+   Classe .is-spotlit posée par main.js une fois le défilement terminé. */
+.cures { position: relative; }
+.cures::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 1.5px solid var(--prune);
+  border-radius: 10px;
+  box-shadow: 0 0 0 5px rgba(122, 82, 112, 0.1);
+  opacity: 0;
+  pointer-events: none;
+}
+.cures.is-spotlit::after { animation: mise-en-lumiere 2.6s var(--ease-doux) both; }
 .cures__title {
   font-size: 13px;
   font-weight: 600;
@@ -1959,7 +1979,19 @@ em { font-style: italic; }
   .respire__halo { width: 340px; height: 340px; margin: -170px 0 0 -170px; }
 }
 
+@keyframes mise-en-lumiere {
+  0%   { opacity: 0; transform: scale(1.04); }
+  18%  { opacity: 1; transform: none; }
+  65%  { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: none; }
+}
+@keyframes mise-en-lumiere-fixe {
+  0%, 65% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .cures.is-spotlit::after { animation-name: mise-en-lumiere-fixe; }
   .btn,
   .mobile-cta,
   .soins__photo-alt,
