@@ -94,7 +94,7 @@
 
 <!-- Signale que JavaScript est actif, avant le premier affichage (évite un flash des animations) -->
 <script>document.documentElement.classList.add('js');</script>
-<link rel="stylesheet" href="css/style.css?v=31">
+<link rel="stylesheet" href="css/style.css?v=33">
 <script src="js/vendor/lenis.min.js?v=1.3.26" defer></script>
 <!-- Mesure d'audience sans cookie (Plausible). À activer une fois le domaine en ligne et le compte
      créé sur plausible.io : retirer les marques de commentaire et remplacer DOMAINE-A-DEFINIR.
@@ -103,7 +103,7 @@
 <script defer data-domain="DOMAINE-A-DEFINIR" src="https://plausible.io/js/script.tagged-events.js"></script>
 <script>window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments); };</script>
 -->
-<script src="js/main.js?v=17" defer></script>
+<script src="js/main.js?v=19" defer></script>
 </head>
 <body>
 
@@ -163,6 +163,8 @@
 
 <!-- 3. PAUSE « RESPIRE » + PAR OÙ COMMENCER -->
 <section class="respire" aria-labelledby="respire-title">
+  <!-- Piste de défilement : la bande y reste collée pendant que la phrase s'éclaire mot à mot (main.js) -->
+  <div class="respire__piste">
   <div class="respire__band">
     <img class="respire__img" src="images/IMG_0069-1600.webp" srcset="images/IMG_0069-800.webp 800w, images/IMG_0069-1600.webp 1600w" sizes="100vw" width="1600" height="2400" loading="lazy" alt="Mains de Violette posées sur le visage d'une cliente, dans une lumière chaude et tamisée">
     <div class="respire__veil" aria-hidden="true"></div>
@@ -171,6 +173,7 @@
       <h2 id="respire-title" class="respire__title">Les journées s'enchaînent.<br>Ici, rien ne presse.</h2>
       <p class="respire__text">Le temps d'un soin, tu poses tout&nbsp;: des mains attentives, des gestes lents, et tes épaules qui se relâchent enfin.</p>
     </div>
+  </div>
   </div>
 
   <div class="start">

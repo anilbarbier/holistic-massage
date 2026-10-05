@@ -270,6 +270,206 @@
     }).observe(document.querySelector('.respire__band'));
   }
 
+  /* ---------- Effets liés au défilement : « Respire » et fil des étapes ----------
+     Recalculés une fois par image pendant le défilement. Avec le réglage
+     « réduire les animations », tout s'affiche directement (style.css)
+     et les valeurs posées ici sont retirées. */
+  function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+  function ramp(v, from, to) { return clamp((v - from) / (to - from), 0, 1); }
+  /* Entrée et sortie lentes, sans rebond */
+  function soft(t) { return t * t * (3 - 2 * t); }
+
+  /* « Respire » : la bande reste collée sous l'en-tête sur une courte piste
+     (.respire__piste). Sur cette piste, de 0 à 1 :
+     0,08 → 0,70  les mots du titre s'éclairent l'un après l'autre (chacun
+                  chevauche un peu le suivant, pour une lecture fluide)
+     0,72 → 0,90  la phrase d'accompagnement apparaît (fondu + 12 px)
+     0 → 1        en continu : photo 1 → 1,06, voile 0,52 → 0,64 */
+  var piste = document.querySelector('.respire__piste');
+  var respireBand = document.querySelector('.respire__band');
+  var respireTitle = document.querySelector('.respire__title');
+  var respireText = document.querySelector('.respire__text');
+  var respireWords = [];
+
+  if (piste && respireBand && respireTitle && respireText) {
+    /* Découpe en mots, retour à la ligne conservé. Le titre complet reste
+       lu d'un seul tenant par les lecteurs d'écran. */
+    var titleLines = respireTitle.innerHTML.split(/<br\s*\/?>/i);
+    respireTitle.setAttribute('aria-label', titleLines.join(' ').replace(/\s+/g, ' ').trim());
+    respireTitle.innerHTML = titleLines.map(function (line) {
+      return line.trim().split(/\s+/).map(function (word) {
+        return '<span class="w" aria-hidden="true">' + word + '</span>';
+      }).join(' ');
+    }).join('<br>');
+    respireWords = Array.prototype.slice.call(respireTitle.querySelectorAll('.w'));
+  }
+
+  function headerHeight() {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+  }
+
+  function updateRespire() {
+    if (!respireWords.length) return;
+    if (reduceMotion.matches) {
+      respireWords.forEach(function (w) { w.style.opacity = ''; });
+      respireText.style.opacity = '';
+      respireText.style.transform = '';
+      respireBand.style.removeProperty('--img-scale');
+      respireBand.style.removeProperty('--voile');
+      return;
+    }
+    var travel = piste.offsetHeight - respireBand.offsetHeight;
+    var p = travel > 0 ? clamp((headerHeight() - piste.getBoundingClientRect().top) / travel, 0, 1) : 1;
+    var slot = (0.70 - 0.08) / respireWords.length;
+    respireWords.forEach(function (w, i) {
+      var start = 0.08 + i * slot;
+      w.style.opacity = (0.2 + 0.8 * soft(ramp(p, start, start + slot * 1.6))).toFixed(3);
+    });
+    var t = soft(ramp(p, 0.72, 0.9));
+    respireText.style.opacity = t.toFixed(3);
+    respireText.style.transform = 'translateY(' + ((1 - t) * 12).toFixed(1) + 'px)';
+    respireBand.style.setProperty('--img-scale', (1 + 0.06 * p).toFixed(4));
+    respireBand.style.setProperty('--voile', (0.52 + 0.12 * p).toFixed(3));
+  }
+
+  /* Ta séance : un fil Sauge, ondulé comme tracé à la main, relie les
+     numéros. Grand écran : il avance avec le défilement de la page (0 quand
+     la ligne des numéros passe à 90 % de la hauteur de l'écran, 1 quand la
+     dernière ligne atteint 45 %). Téléphone : il suit le glissement du
+     carrousel des étapes. Deux numéros sur des lignes différentes (écran
+     moyen) ne sont pas reliés, mais gardent leur part du parcours. */
+  var steps = document.querySelector('.steps');
+  var stepNums = steps ? Array.prototype.slice.call(steps.querySelectorAll('.step__num')) : [];
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var thread = null;
+  var threadSegments = [];
+
+  if (stepNums.length > 1) {
+    thread = document.createElementNS(SVG_NS, 'svg');
+    thread.setAttribute('class', 'steps__thread');
+    thread.setAttribute('aria-hidden', 'true');
+    steps.appendChild(thread);   /* en dernier : ne décale pas les :nth-child des étapes */
+    steps.classList.add('has-thread');
+  }
+
+  /* Position du texte seul (« 01 ») dans la liste : le numéro occupe toute
+     sa colonne, d'où la mesure du texte. Les offsets ignorent la montée des
+     étapes à leur apparition et le glissement du carrousel. */
+  function numBox(el) {
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var r = range.getBoundingClientRect();
+    var left = 0, top = 0, node = el;
+    while (node && node !== steps) {
+      left += node.offsetLeft;
+      top += node.offsetTop;
+      node = node.offsetParent;
+    }
+    return { left: left, right: left + r.width, top: top, height: r.height };
+  }
+
+  function buildThread() {
+    if (!thread) return;
+    thread.innerHTML = '';
+    threadSegments = [];
+    if (reduceMotion.matches) return;
+    var w = steps.scrollWidth;
+    /* Hauteur visible de la liste, et non scrollHeight : un dessin plus haut
+       que la liste la rendrait déplaçable verticalement dans le carrousel */
+    var h = steps.clientHeight;
+    thread.setAttribute('width', w);
+    thread.setAttribute('height', h);
+    thread.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    /* Petit hasard reproductible : le fil a toujours le même « coup de main » */
+    var seed = 7;
+    var rnd = function () { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    var r = function (n) { return n.toFixed(1); };
+
+    for (var i = 0; i < stepNums.length - 1; i++) {
+      var a = numBox(stepNums[i]);
+      var b = numBox(stepNums[i + 1]);
+      if (Math.abs(a.top - b.top) > 4) {
+        threadSegments.push(null);
+        continue;
+      }
+      var y = a.top + a.height * 0.55;
+      var x0 = a.right + 16;
+      var x1 = b.left - 16;
+      var len = x1 - x0;
+      var amp = 2.5 + rnd() * 2.5;
+      var path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('d',
+        'M' + r(x0) + ' ' + r(y) +
+        ' C' + r(x0 + len * 0.28) + ' ' + r(y - amp) +
+        ' ' + r(x0 + len * 0.55) + ' ' + r(y + amp * 1.2) +
+        ' ' + r(x0 + len * 0.75) + ' ' + r(y + (rnd() - 0.5) * 2) +
+        ' S' + r(x1 - len * 0.08) + ' ' + r(y - amp * 0.6) +
+        ' ' + r(x1) + ' ' + r(y));
+      thread.appendChild(path);
+      var total = path.getTotalLength();
+      path.style.strokeDasharray = total + ' ' + total;
+      threadSegments.push({ path: path, len: total });
+    }
+  }
+
+  function updateThread() {
+    if (!thread) return;
+    if (reduceMotion.matches) {
+      stepNums.forEach(function (n) { n.classList.remove('is-reached'); });
+      return;
+    }
+    var p;
+    if (steps.scrollWidth > steps.clientWidth + 4) {
+      var inView = steps.getBoundingClientRect().top < window.innerHeight * 0.85;
+      p = inView ? clamp(steps.scrollLeft / (steps.scrollWidth - steps.clientWidth), 0, 1) : 0;
+    } else {
+      var vh = window.innerHeight;
+      var first = stepNums[0].getBoundingClientRect().top;
+      var last = stepNums[stepNums.length - 1].getBoundingClientRect().top;
+      p = clamp((vh * 0.9 - first) / (vh * 0.45 + (last - first)), 0, 1);
+    }
+    var count = threadSegments.length;
+    threadSegments.forEach(function (seg, i) {
+      if (!seg) return;
+      var t = ramp(p, i / count, (i + 1) / count);
+      seg.path.style.strokeDashoffset = (seg.len * (1 - t)).toFixed(1);
+      /* Pas encore commencé : caché, sinon son bout arrondi laisse un point */
+      seg.path.style.visibility = t > 0 ? 'visible' : 'hidden';
+    });
+    stepNums.forEach(function (n, i) {
+      n.classList.toggle('is-reached', i === 0 ? p > 0 : p >= i / count - 0.001);
+    });
+  }
+
+  if (respireWords.length || thread) {
+    var scrollQueued = false;
+    var updateScrollEffects = function () {
+      scrollQueued = false;
+      updateRespire();
+      updateThread();
+    };
+    var requestScrollUpdate = function () {
+      if (!scrollQueued) {
+        scrollQueued = true;
+        requestAnimationFrame(updateScrollEffects);
+      }
+    };
+    var rebuild = function () {
+      buildThread();
+      requestScrollUpdate();
+    };
+
+    window.addEventListener('scroll', requestScrollUpdate, { passive: true });
+    window.addEventListener('resize', rebuild);
+    if (thread) {
+      steps.addEventListener('scroll', requestScrollUpdate, { passive: true });
+      if ('ResizeObserver' in window) new ResizeObserver(rebuild).observe(steps);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(rebuild);
+    if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', rebuild);
+    rebuild();
+  }
+
   /* ---------- En-tête : ombre légère une fois le hero dépassé ---------- */
   var header = document.querySelector('.site-header');
   var hero = document.querySelector('.hero');
