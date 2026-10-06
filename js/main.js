@@ -16,7 +16,7 @@
      Dans Calendly, la question « Quel soin souhaites-tu ? » doit être la
      PREMIÈRE question du formulaire (c'est elle que remplit « a1 »), et ses
      choix doivent porter exactement les noms indiqués dans data-soin
-     (« Drainage corps entier », « Massage liftant japonais »…).
+     (« Drainage corps entier », « Soin visage signature »…).
      Les paramètres utm_* permettent de voir dans Calendly depuis quel bouton
      chaque rendez-vous a été pris. */
   var CALENDLY_URL = '';
@@ -373,6 +373,10 @@
     thread.innerHTML = '';
     threadSegments = [];
     if (reduceMotion.matches) return;
+    /* Le dessin est remis à zéro avant de mesurer : sinon sa propre largeur
+       entrerait dans la mesure, et un dessin trop large le resterait */
+    thread.setAttribute('width', 0);
+    thread.setAttribute('height', 0);
     var w = steps.scrollWidth;
     /* Hauteur visible de la liste, et non scrollHeight : un dessin plus haut
        que la liste la rendrait déplaçable verticalement dans le carrousel */
@@ -419,7 +423,10 @@
       return;
     }
     var p;
-    if (steps.scrollWidth > steps.clientWidth + 4) {
+    /* Carrousel des étapes (téléphone) : reconnu à son défilement
+       horizontal prévu par le CSS, et non à une largeur qui déborde */
+    var isCarousel = getComputedStyle(steps).overflowX !== 'visible';
+    if (isCarousel && steps.scrollWidth > steps.clientWidth + 4) {
       var inView = steps.getBoundingClientRect().top < window.innerHeight * 0.85;
       p = inView ? clamp(steps.scrollLeft / (steps.scrollWidth - steps.clientWidth), 0, 1) : 0;
     } else {
@@ -498,13 +505,10 @@
     var slideCount = slides.length;
     var current = 0;
 
-    var slideOffset = function (dx) {
-      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-      var width = slides[0].offsetWidth;
-      return (viewport.clientWidth - width) / 2 - current * (width + gap) + (dx || 0);
-    };
+    /* La position elle-même est calculée par le CSS (voir .reviews__track) */
     var renderTrack = function (dx) {
-      track.style.transform = 'translate3d(' + slideOffset(dx) + 'px, 0, 0)';
+      track.style.setProperty('--i', current);
+      track.style.setProperty('--dx', (dx || 0) + 'px');
     };
     /* Résistance élastique quand on tire au-delà du premier ou du dernier avis */
     var resist = function (dx) {
@@ -522,14 +526,6 @@
       });
       renderTrack(0);
     };
-    /* Placement sans animation (arrivée sur la page, changement de taille) */
-    var placeInstantly = function () {
-      track.classList.add('is-dragging');
-      renderTrack(0);
-      void track.offsetWidth;
-      track.classList.remove('is-dragging');
-    };
-
     dots.forEach(function (dot, n) {
       dot.addEventListener('click', function () { goTo(n); });
     });
@@ -670,9 +666,7 @@
       renderTrack(resist(wheelDistance));
     }, { passive: false });
 
-    window.addEventListener('resize', placeInstantly);
     goTo(0);
-    placeInstantly();
   }
 
   /* ---------- FAQ : ouverture et fermeture avec une hauteur fluide ----------

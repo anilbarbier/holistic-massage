@@ -1102,16 +1102,27 @@ em { font-style: italic; }
           mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
 }
 .reviews__viewport.is-dragging { cursor: grabbing; }
+/* La position de la piste est calculée par le CSS, pas en pixels par le
+   JavaScript : elle reste juste quoi qu'il arrive à la largeur de la page
+   (barre d'adresse du téléphone, barre de défilement, chargement…).
+   Les pourcentages du translate se rapportent à la largeur de la piste,
+   égale à celle de la fenêtre du fil. main.js règle seulement --i (avis
+   affiché) et --dx (décalage pendant un glissement). */
 .reviews__track {
+  --slide-w: min(760px, 78%);
+  --gap: 56px;
+  --i: 0;
+  --dx: 0px;
   display: flex;
   align-items: center;
-  gap: 56px;
+  gap: var(--gap);
+  transform: translate3d(calc((100% - var(--slide-w)) / 2 - var(--i) * (var(--slide-w) + var(--gap)) + var(--dx)), 0, 0);
   will-change: transform;
   transition: transform 0.7s var(--ease-doux);
 }
 .reviews__track.is-dragging { transition: none; }
 .reviews__track .review {
-  flex: 0 0 min(760px, 78%);
+  flex: 0 0 var(--slide-w);
   opacity: 0.22;
   transform: scale(0.93);
   transition: opacity 0.7s var(--ease-doux), transform 0.7s var(--ease-doux);
@@ -1614,8 +1625,6 @@ em { font-style: italic; }
     box-decoration-break: clone;
   }
   .note-reco__ring { display: none; }
-  /* « trois rituels d'une heure » est déjà dit plus haut : évite un « · 1h » isolé */
-  #soins-visage .note-reco .prest__dur { display: none; }
   .prest__btn { align-self: stretch; }
   /* Le sur-titre « En cure · 5 séances » suffit : on libère de la place pour le prix barré */
   .prest-list--cures .prest__dur { display: none; }
@@ -1680,8 +1689,7 @@ em { font-style: italic; }
      coupé par la section pour ne pas élargir la page */
   .reviews { overflow: hidden; }
   .reviews__viewport { overflow: visible; -webkit-mask-image: none; mask-image: none; }
-  .reviews__track { gap: 16px; }
-  .reviews__track .review { flex-basis: 82%; }
+  .reviews__track { --gap: 16px; --slide-w: 82%; }
   .review__quote { font-size: 28px; }
   .review__caption { flex-direction: column; align-items: center; gap: 6px; }
   .review__caption::before { margin-bottom: 6px; }
